@@ -1,27 +1,46 @@
 {extend name="public/base"}
 {block name="head"}
 <style>
-    #feed_list .card{
+    #feed_list .card {
         border: none;
-        border-bottom: 1px solid rgba(0,0,0,.125);
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
+    }
+
+    .card-body {
+        padding: 20px 0;
+    }
+
+    .card-text {
+        word-break: break-all;
+        white-space: pre-wrap;
     }
 </style>
 {/block}
 {block name="body"}
 <div class="container">
     <div class="row">
-        <div class="col-8" id="feed_list">
-            {foreach $list as $key=>$vo}
-            <div class="card">
-                <div class="card-body">
-                <h5 class="card-title">{$vo.username}</h5>
-                <p class="card-text">{$vo.text}</p>
+        <div class="col-md-9">
+            <div id="feed_list">
+                {foreach $list as $key=>$vo}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{$vo.username}</h5>
+                        <p class="card-text">{$vo.text}</p>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+            <button type="button" class="btn btn-primary btn-lg btn-block my-3">加载更多</button>
+        </div>
+        <div class="col-md-3 my-3">
+            <div class="row">
+                <div class="col-sm-6">
+                    <button type="button" class="btn btn-primary btn-block">立即登录</button>
+                </div>
+                <div class="col-sm-6">
+                    <button type="button" class="btn btn-primary btn-block">注册账号</button>
                 </div>
             </div>
-            {/foreach}
-        </div>
-        <div class="col-4">
-
         </div>
     </div>
 </div>
