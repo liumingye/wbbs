@@ -1,0 +1,28 @@
+{extend name="public/base"}
+{block name="head"}
+<style>
+    #feed_list .card{
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="container">
+    <div class="row">
+        <div class="col-8" id="feed_list">
+            {foreach $list as $key=>$vo}
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title">{$vo.username}</h5>
+                <p class="card-text">{$vo.text}</p>
+                </div>
+            </div>
+            {/foreach}
+        </div>
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+{/block}
