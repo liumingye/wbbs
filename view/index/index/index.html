@@ -1,47 +1,116 @@
 {extend name="public/base"}
 {block name="head"}
 <style>
-    #feed_list .card {
+    #main .card {
         border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, .125);
+        border-bottom: 1px solid rgb(230, 236, 240);
     }
 
-    .card-body {
-        padding: 20px 0;
+    /* 发布框 */
+    #send_post {
+        border-radius: 0;
     }
 
-    .card-text {
+    #send_post .form-group {
+        margin-bottom: 0;
+    }
+
+    #input_post {
+        padding: .375rem 0;
+        resize: none;
+        border: none;
+    }
+
+    #input_post:focus {
+        box-shadow: none;
+    }
+
+    .line {
+        background-color: rgb(230, 236, 240);
+        height: 10px;
+    }
+
+    /* 文章流 */
+    #feed_list .card {
+        border-radius: 0;
+    }
+
+    #feed_list .card-title {
+        font-size: 16px;
+    }
+
+    #feed_list .card-text {
         word-break: break-all;
         white-space: pre-wrap;
     }
 </style>
 {/block}
 {block name="body"}
-<div class="container">
-    <div class="row">
-        <div class="col-md-9">
-            <div id="feed_list">
-                {foreach $list as $key=>$vo}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{$vo.username}</h5>
-                        <p class="card-text">{$vo.text}</p>
+<div id="send_post" class="card">
+    <form class="card-body row no-gutters">
+        <div class="mr-3">
+            <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <textarea class="form-control" id="input_post" rows="1" placeholder="有什么新鲜事想告诉大家？"></textarea>
+                <div class="row no-gutters border-top">
+                    <div class="flex-fill mt-3 mr-3">
+                        <a href="javascrpit:;"># <span>表情</span></a>
+                        <a href="javascrpit:;"># <span>图片</span></a>
+                        <a href="javascrpit:;"># <span>链接</span></a>
+                        <a href="javascrpit:;"># <span>话题</span></a>
+                    </div>
+                    <div class="flex-row-reverse mt-3">
+                        <button type="button" class="btn btn-primary rounded-pill">发布</button>
                     </div>
                 </div>
-                {/foreach}
             </div>
-            <button type="button" class="btn btn-primary btn-lg btn-block my-3">加载更多</button>
         </div>
-        <div class="col-md-3 my-3">
-            <div class="row">
-                <div class="col-sm-6">
-                    <button type="button" class="btn btn-primary btn-block">立即登录</button>
-                </div>
-                <div class="col-sm-6">
-                    <button type="button" class="btn btn-primary btn-block">注册账号</button>
-                </div>
+    </form>
+</div>
+<div class="line"></div>
+<div id="feed_list">
+    {foreach $list as $key=>$vo}
+    <div class="card">
+        <div class="card-body row no-gutters">
+            <div class="mr-3">
+                <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
+            </div>
+            <div class="col">
+                <h5 class="card-title font-weight-bold">{$vo.username}</h5>
+                <p class="card-text">{$vo.text}</p>
             </div>
         </div>
     </div>
+    {/foreach}
 </div>
+<button type="button" class="btn btn-primary btn-block w-75 my-3 mx-auto">显示更多</button>
+{/block}
+{block name="foot"}
+<script>
+    jQuery.fn.extend({
+        autoHeight: function () {
+            return this.each(function () {
+                var $this = $(this);
+                if (!$this.attr('_initAdjustHeight')) {
+                    $this.attr('_initAdjustHeight', $this.outerHeight());
+                }
+                _adjustH(this).on('input', function () {
+                    _adjustH(this);
+                });
+            });
+            /**
+             * 重置高度
+             * @param {Object} elem
+             */
+            function _adjustH(elem) {
+                var $obj = $(elem);
+                return $obj.css({ height: $obj.attr('_initAdjustHeight') }).height(elem.scrollHeight);
+            }
+        }
+    });
+    // 使用
+    $('#input_post').autoHeight();
+</script>
 {/block}

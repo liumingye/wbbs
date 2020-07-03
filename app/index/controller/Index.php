@@ -9,9 +9,9 @@ class Index extends Base
 {
     public function index()
     {
-        $title = "轻社区";
-        $description = "轻社区";
-        $keywords = "轻社区";
+        $title = "Wbbs轻社区";
+        $description = "Wbbs轻社区";
+        $keywords = "Wbbs轻社区";
         $page = input('param.page', 0, 'intval');
         if ($page < 1) {
             $page = 1;
