@@ -1,0 +1,51 @@
+html {
+  overflow-y: scroll;
+}
+a:hover {
+  text-decoration: none;
+}
+header {
+  -webkit-align-items: stretch;
+  -webkit-flex-direction: column;
+  -ms-flex-align: stretch;
+  -ms-flex-direction: column;
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+.toptip {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 5px 15px;
+  font-size: 20px;
+  font-weight: 600;
+  border-bottom: 1px solid rgb(230, 236, 240);
+  background-color: #fff;
+  line-height: 36px;
+}
+.left-nav-container,
+.left-nav {
+  width: 88px;
+}
+@media (min-width: 1200px) {
+  .left-nav-container,
+  .left-nav {
+    width: 250px;
+  }
+}
+@media (min-width: 768px) {
+  .feed {
+    border-left: 1px solid rgb(230, 236, 240);
+    border-right: 1px solid rgb(230, 236, 240);
+  }
+  .main {
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+  }
+  .left-nav-row {
+    position: fixed;
+    height: 100%;
+  }
+}

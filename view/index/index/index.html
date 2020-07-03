@@ -1,14 +1,15 @@
 {extend name="public/base"}
 {block name="head"}
 <style>
-    #main .card {
+    main .card {
         border: none;
         border-bottom: 1px solid rgb(230, 236, 240);
     }
 
     /* 发布框 */
-    #send_post {
+    #send_post .card{
         border-radius: 0;
+        border-bottom: none;
     }
 
     #send_post .form-group {
@@ -46,28 +47,30 @@
 </style>
 {/block}
 {block name="body"}
-<div id="send_post" class="card">
-    <form class="card-body row no-gutters">
-        <div class="mr-3">
-            <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <textarea class="form-control" id="input_post" rows="1" placeholder="有什么新鲜事想告诉大家？"></textarea>
-                <div class="row no-gutters border-top">
-                    <div class="flex-fill mt-3 mr-3">
-                        <a href="javascrpit:;"># <span>表情</span></a>
-                        <a href="javascrpit:;"># <span>图片</span></a>
-                        <a href="javascrpit:;"># <span>链接</span></a>
-                        <a href="javascrpit:;"># <span>话题</span></a>
-                    </div>
-                    <div class="flex-row-reverse mt-3">
-                        <button type="button" class="btn btn-primary rounded-pill">发布</button>
+<div id="send_post">
+    <div class="card">
+        <form class="card-body row no-gutters">
+            <div class="mr-3">
+                <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <textarea class="form-control" id="input_post" rows="1" placeholder="有什么新鲜事想告诉大家？"></textarea>
+                    <div class="row no-gutters border-top">
+                        <div class="flex-fill mt-3 mr-3">
+                            <a href="javascrpit:;"># <span>表情</span></a>
+                            <a href="javascrpit:;"># <span>图片</span></a>
+                            <a href="javascrpit:;"># <span>链接</span></a>
+                            <a href="javascrpit:;"># <span>话题</span></a>
+                        </div>
+                        <div class="flex-row-reverse mt-3">
+                            <button type="button" class="btn btn-primary rounded-pill">发布</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 <div class="line"></div>
 <div id="feed_list">
@@ -75,10 +78,10 @@
     <div class="card">
         <div class="card-body row no-gutters">
             <div class="mr-3">
-                <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
+                <img class="rounded-circle" src="{$vo.avatar}" width="48" height="48" alt="刘明野">
             </div>
             <div class="col">
-                <h5 class="card-title font-weight-bold">{$vo.username}</h5>
+                <h5 class="card-title font-weight-bold">{$vo.username}{$vo.id}</h5>
                 <p class="card-text">{$vo.text}</p>
             </div>
         </div>

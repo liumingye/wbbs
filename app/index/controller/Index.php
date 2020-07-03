@@ -19,7 +19,8 @@ class Index extends Base
         $length = 10;
         $start = ($page - 1) * $length;
         $db = new Post;
-        $data = $db->listData([], 'p.create_time desc', $start, $length, ['user'], 'p.text,u.username');
+        $data = $db->listData([], 'p.create_time desc', $start, $length, ['user'], 'p.uid,p.id,p.text,u.username,u.avatar,u.email');
+
         $list = $data['list'];
         View::assign(compact('title', 'description', 'keywords', 'list'));
         return $this->label_fetch();
