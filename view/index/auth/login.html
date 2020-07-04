@@ -1,9 +1,31 @@
 {extend name="public/base"}
+{block name="title"}登录{/block}
+{block name="toptip"}登录{/block}
 {block name="head"}
 
 {/block}
 {block name="body"}
-
+<form class="col" action="{:url('/auth/login')}" method="POST">
+    {:token_field()}
+    {present name="error"}
+    <div class="alert alert-danger" role="alert">
+        {$error}
+    </div>
+    {/present}
+    <div class="form-group">
+        <label>邮件地址或用户名</label>
+        <input type="text" class="form-control" name="name" required>
+    </div>
+    <div class="form-group">
+        <label>密码</label>
+        <input type="password" class="form-control" name="password" required>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+        <label class="form-check-label" for="remember">下次自动登录</label>
+    </div>
+    <button type="submit" class="btn btn-primary">登录</button>
+</form>
 {/block}
 {block name="foot"}
 

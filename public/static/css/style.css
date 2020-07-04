@@ -24,16 +24,36 @@ header {
   background-color: #fff;
   line-height: 36px;
 }
+.line {
+  background-color: rgb(230, 236, 240);
+  height: 10px;
+}
+/* 文章流 */
+#feed_list .card {
+  border-radius: 0;
+}
+
+#feed_list .card-title {
+  font-size: 16px;
+}
+
+#feed_list .card-text {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+/* 左侧导航 */
 .left-nav-container,
 .left-nav {
   width: 88px;
 }
+/* lg */
 @media (min-width: 1200px) {
   .left-nav-container,
   .left-nav {
     width: 250px;
   }
 }
+/* md */
 @media (min-width: 768px) {
   .feed {
     border-left: 1px solid rgb(230, 236, 240);

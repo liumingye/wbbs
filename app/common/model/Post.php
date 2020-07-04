@@ -31,7 +31,7 @@ class Post extends Base
         if (array_key_exists('user', $with) || in_array('user', $with)) {
             $res = $res->buildSql();
             $where = isset($with['user']['where']) ? $with['user']['where'] : '';
-            $res = User::where($where)->alias('u')->rightjoin([$res => 'p'], 'u.id = p.uid');
+            $res = User::where($where)->alias('u')->rightjoin([$res => 'p'], 'u.uid = p.uid');
         }
         $list = $res->field($field)->order($order)->limit($start, $length)->select();
         return ['code' => 1, 'msg' => '数据列表', 'total' => $total, 'list' => $list];
