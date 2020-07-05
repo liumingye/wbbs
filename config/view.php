@@ -26,5 +26,6 @@ return [
         '__STATIC__' => url('/static'),
         '__JS__' => url('/static/js'),
         '__CSS__' => url('/static/css'),
+        '__IMG__' => url('/static/img'),
     ]
 ];

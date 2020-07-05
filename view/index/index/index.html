@@ -1,56 +1,83 @@
 {extend name="public/base"}
-{block name="title"}主页{/block}
+{block name="title"}{$config['title']} - {$config['description']}{/block}
 {block name="toptip"}主页{/block}
 {block name="head"}
 <style>
-    main .card {
+    .feed .card {
         border: none;
         border-bottom: 1px solid rgb(230, 236, 240);
     }
 
     /* 发布框 */
-    #send_post{
+    .send_post {
         margin-top: -20px;
     }
-    #send_post .card{
+
+    .send_post .card {
         border-radius: 0;
         border-bottom: none;
     }
 
-    #send_post .form-group {
+    .send_post .form-group {
         margin-bottom: 0;
     }
 
-    #input_post {
+    .input_post {
         padding: .375rem 0;
         resize: none;
         border: none;
+        font-size: 19px;
     }
 
-    #input_post:focus {
+    .input_post:focus {
         box-shadow: none;
+    }
+
+    /* 发布功能 */
+    .func_area {
+        margin-bottom: -0.75rem;
+    }
+
+    .func_area .kind {
+        margin-left: -8px;
+        padding: .375rem 0;
+    }
+
+    .func_area .kind a {
+        padding: 8px;
+        color: #1da1f2;
+        border-radius: 999px;
+    }
+
+    .func_area .kind a:hover {
+        background-color: #1da1f21a;
+    }
+
+    .func_area .kind i {
+        font-size: 24px;
+        vertical-align: text-top;
     }
 </style>
 {/block}
 {block name="body"}
-<div id="send_post">
+<div class="send_post">
     <div class="card">
-        <form class="card-body row no-gutters">
+        <form class="card-body row no-gutters mt-2">
             <div class="mr-3">
-                <img class="rounded-circle" src="https://q1.qlogo.cn/g?b=qq&s=140&nk=898310895" width="48" height="48" alt="刘明野">
+                <img class="rounded-circle" src="{if $user}{$user.avatar_url}{else}__IMG__/logo.svg{/if}" width="48" height="48">
             </div>
             <div class="col">
                 <div class="form-group">
-                    <textarea class="form-control" id="input_post" rows="1" placeholder="有什么新鲜事想告诉大家？"></textarea>
-                    <div class="row no-gutters border-top">
-                        <div class="flex-fill mt-3 mr-3">
-                            <a href="javascrpit:;"># <span>表情</span></a>
-                            <a href="javascrpit:;"># <span>图片</span></a>
-                            <a href="javascrpit:;"># <span>链接</span></a>
-                            <a href="javascrpit:;"># <span>话题</span></a>
+                    <textarea class="form-control input_post" rows="1" placeholder="有什么新鲜事想告诉大家？"></textarea>
+                    <div class="row no-gutters border-top func_area">
+                        <div class="kind flex-fill mt-2 mr-3">
+                            <a href="javascrpit:;"><i class="la la-smile"></i></a>
+                            <a href="javascrpit:;"><i class="la la-image"></i></a>
+                            <a href="javascrpit:;"><i class="la la-link"></i></a>
+                            <a href="javascrpit:;"><i class="la la-hashtag"></i></a>
                         </div>
-                        <div class="flex-row-reverse mt-3">
-                            <button type="button" class="btn btn-primary rounded-pill">发布</button>
+                        <div class="flex-row-reverse mt-2">
+                            <button type="button" class="btn btn-primary rounded-pill">推文</button>
                         </div>
                     </div>
                 </div>
@@ -64,10 +91,10 @@
     <div class="card">
         <div class="card-body row no-gutters">
             <div class="mr-3">
-                <img class="rounded-circle" src="{$vo.avatar_url}" width="48" height="48" alt="刘明野">
+                <img class="rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48">
             </div>
             <div class="col">
-                <h5 class="card-title font-weight-bold">{$vo.nickname}{$vo.id}</h5>
+                <h5 class="card-title font-weight-bold">{$vo.user.nickname}{$vo.id}</h5>
                 <p class="card-text">{$vo.text}</p>
             </div>
         </div>
@@ -100,6 +127,6 @@
         }
     });
     // 使用
-    $('#input_post').autoHeight();
+    $('.input_post').autoHeight();
 </script>
 {/block}

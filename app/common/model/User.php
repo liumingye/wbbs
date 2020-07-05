@@ -17,7 +17,7 @@ class User extends Base
      * 用户
      *
      * @access private
-     * @var array
+     * @var object
      */
     private $_user;
 
@@ -27,7 +27,7 @@ class User extends Base
      * @access private
      * @var boolean
      */
-    private $_hasLogin = NULL;
+    private $_hasLogin = null;
 
     public static function onAfterRead($user)
     {
@@ -36,7 +36,7 @@ class User extends Base
             $dir = substr(sprintf("%09d", $uid), 0, 3);
             $avatar = config('wbbs.upload_url') . "/avatar/$dir/$uid.png?" . $user->avatar;
         } elseif ($user->mail) {
-            $avatar = 'https://gravatar.helingqi.com/avatar/' . md5($user->mail);
+            $avatar = 'https://dn-qiniu-avatar.qbox.me/avatar/' . md5($user->mail);
         } else {
             $avatar = config('view.tpl_replace_string.__STATIC__') . '/img/avatar.png';
         }
@@ -63,14 +63,14 @@ class User extends Base
         $hashValidate = $hasher->CheckPassword($password, $user['password']);
         if ($user && $hashValidate) {
             if (!$temporarily) {
-                $token = function_exists('openssl_random_pseudo_bytes') ?
-                    bin2hex(openssl_random_pseudo_bytes(16)) : sha1(\think\helper\Str::random(20));
+                $token = function_exists('openssl_random_pseudo_bytes') ? bin2hex(openssl_random_pseudo_bytes(16)) : sha1(\think\helper\Str::random(20));
                 $user['token'] = $token;
                 cookie('wbbs_uid', $user['uid'], $expire);
-                cookie('wbbs_token', Common::hashStr($token),  $expire);
+                cookie('wbbs_token', Common::hashStr($token), $expire);
                 //更新最后登录时间以及验证码
                 $user = $this->find($user['uid']);
                 $user->token = $token;
+                $user->login_ip = ip2long(request()->ip());
                 $user->login_time = time();
                 $user->save();
             }
@@ -89,11 +89,11 @@ class User extends Base
      */
     public function hasLogin()
     {
-        if (NULL !== $this->_hasLogin) {
+        if (null !== $this->_hasLogin) {
             return $this->_hasLogin;
         } else {
             $cookieUid = cookie('wbbs_uid');
-            if (NULL !== $cookieUid) {
+            if (null !== $cookieUid) {
                 /** 验证登陆 */
                 $user = $this->find($cookieUid);
                 $token = cookie('wbbs_token');
@@ -117,5 +117,15 @@ class User extends Base
     {
         cookie('wbbs_uid', null);
         cookie('wbbs_token', null);
+    }
+    /**
+     * 获取用户信息
+     *
+     * @access public
+     * @return object
+     */
+    public function getUser()
+    {
+        return $this->_user;
     }
 }

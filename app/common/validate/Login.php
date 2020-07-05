@@ -8,10 +8,10 @@ class Login extends Validate
 {
     protected $rule = [
         'name' => ['require'],
-        'password' => ['require']
+        'password' => ['require'],
     ];
-    protected $message  =   [
+    protected $message = [
         'name.require' => '请输入用户名',
-        'password.require' => '请输入密码'
+        'password.require' => '请输入密码',
     ];
 }

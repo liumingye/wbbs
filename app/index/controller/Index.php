@@ -9,8 +9,6 @@ class Index extends Base
 {
     public function index()
     {
-        $description = $this->config['description'];
-        $keywords = $this->config['keywords'];
         $page = input('param.page', 0, 'intval');
         if ($page < 1) {
             $page = 1;
@@ -18,10 +16,8 @@ class Index extends Base
         $length = 10;
         $start = ($page - 1) * $length;
         $post = new Post;
-        $data = $post->listData([], 'p.create_time desc', $start, $length, ['user'], 'p.uid,p.id,p.text,u.nickname,u.avatar,u.mail');
-
-        $list = $data['list'];
-        View::assign(compact('description', 'keywords', 'list'));
+        $list = $post->with('user')->limit($start, $length)->order('create_time desc')->select();
+        View::assign(compact('list'));
         return $this->label_fetch();
     }
 }
