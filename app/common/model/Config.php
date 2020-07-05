@@ -6,8 +6,6 @@ class Config extends Base
 {
     // 设置主键
     protected $pk = 'cname';
-    // 设置数据表（不含前缀）
-    protected $name = 'config';
 
     /**
      * 缓存的插件配置
@@ -45,7 +43,7 @@ class Config extends Base
     {
         // 是否有缓存
         if (!isset($this->_cacheConfig[$cname])) {
-            $item = $this->where(['cname' =>  $cname])->find();
+            $item = $this->where(['cname' =>  $cname])->cache(true)->find();
             if (!empty($item)) {
                 $item = $item->toArray();
                 $item = $this->__convertData($item);

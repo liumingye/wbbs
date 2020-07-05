@@ -3,8 +3,8 @@
 namespace app\index\controller;
 
 use app\common\model\User;
-use app\common\validate\Login;
-use app\common\validate\Register;
+use app\index\validate\Login;
+use app\index\validate\Register;
 use think\exception\ValidateException;
 use think\facade\View;
 

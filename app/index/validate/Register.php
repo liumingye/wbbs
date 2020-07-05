@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\validate;
+namespace app\index\validate;
 
 use app\common\model\User;
 use think\Validate;

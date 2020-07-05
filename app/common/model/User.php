@@ -8,10 +8,6 @@ class User extends Base
 {
     // 设置主键
     protected $pk = 'uid';
-    // 设置数据表（不含前缀）
-    protected $name = 'user';
-    // 自动写入时间戳
-    protected $autoWriteTimestamp = true;
 
     /**
      * 用户
@@ -29,6 +25,9 @@ class User extends Base
      */
     private $_hasLogin = null;
 
+    /**
+     * 模型事件 查询后
+     */
     public static function onAfterRead($user)
     {
         if ($user->avatar) {
@@ -95,7 +94,7 @@ class User extends Base
             $cookieUid = cookie('wbbs_uid');
             if (null !== $cookieUid) {
                 /** 验证登陆 */
-                $user = $this->find($cookieUid);
+                $user = $this->cache(true)->find($cookieUid);
                 $token = cookie('wbbs_token');
                 if ($user && Common::hashValidate($user['token'], $token)) {
                     $this->_user = $user;

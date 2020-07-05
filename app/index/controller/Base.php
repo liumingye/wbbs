@@ -6,4 +6,5 @@ use app\BaseController;
 
 class Base extends BaseController
 {
+
 }

@@ -16,7 +16,7 @@ class Index extends Base
         $length = 10;
         $start = ($page - 1) * $length;
         $post = new Post;
-        $list = $post->with('user')->limit($start, $length)->order('create_time desc')->select();
+        $list = $post->with('user')->withCache(true)->limit($start, $length)->order('create_time desc')->cache(true)->select();
         View::assign(compact('list'));
         return $this->label_fetch();
     }

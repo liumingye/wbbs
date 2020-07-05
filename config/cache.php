@@ -20,7 +20,7 @@ return [
             // 缓存有效期 0表示永久缓存
             'expire'     => 0,
             // 缓存标签前缀
-            'tag_prefix' => 'tag:',
+            'tag_prefix' => 'wbbs:',
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
         ],
