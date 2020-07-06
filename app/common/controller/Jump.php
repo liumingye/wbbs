@@ -14,34 +14,9 @@
 namespace app\common\controller;
 
 use think\exception\HttpResponseException;
-use think\App;
 use think\Response;
 trait Jump
 {
-    /**
-     * Request实例
-     * @var \think\Request
-     */
-    protected $request;
-
-    /**
-     * 应用实例
-     * @var \think\App
-     */
-    protected $app;
-
-    /**
-     * 构造方法
-     * @access public
-     * @param  App  $app  应用对象
-     */
-    public function __construct(App $app)
-    {
-        parent::__construct();
-        $this->app     = $app;
-        $this->request = $this->app->request;
-    }
-
     /**
      * 操作成功跳转的快捷方法
      * @access protected
@@ -57,7 +32,7 @@ trait Jump
         if (is_null($url) && isset($_SERVER["HTTP_REFERER"])) {
             $url = $_SERVER["HTTP_REFERER"];
         } elseif ($url) {
-            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string)$this->app->route->buildUrl($url);
+            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string) app()->route->buildUrl($url);
         }
 
         $result = [
@@ -72,7 +47,7 @@ trait Jump
         // 把跳转模板的渲染下沉，这样在 response_send 行为里通过getData()获得的数据是一致性的格式
         if ('html' == strtolower($type)) {
             $type = 'view';
-            $response = Response::create($this->app->config->get('app.dispatch_success_tmpl'), $type)->assign($result)->header($header);
+            $response = Response::create(app()->config->get('app.dispatch_success_tmpl'), $type)->assign($result)->header($header);
         } else {
             $response = Response::create($result, $type)->header($header);
         }
@@ -93,9 +68,9 @@ trait Jump
     protected function error($msg = '', string $url = null, $data = '', int $wait = 3, array $header = [])
     {
         if (is_null($url)) {
-            $url = $this->request->isAjax() ? '' : 'javascript:history.back(-1);';
+            $url = request()->isAjax() ? '' : 'javascript:history.back(-1);';
         } elseif ($url) {
-            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string)$this->app->route->buildUrl($url);
+            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string) app()->route->buildUrl($url);
         }
 
         $result = [
@@ -110,7 +85,7 @@ trait Jump
 
         if ('html' == strtolower($type)) {
             $type = 'view';
-            $response = Response::create($this->app->config->get('app.dispatch_error_tmpl'), $type)->assign($result)->header($header);
+            $response = Response::create(app()->config->get('app.dispatch_error_tmpl'), $type)->assign($result)->header($header);
         } else {
             $response = Response::create($result, $type)->header($header);
         }
@@ -150,6 +125,6 @@ trait Jump
      */
     protected function getResponseType()
     {
-        return $this->request->isJson() || $this->request->isAjax() ? 'json' : 'html';
+        return request()->isJson() || request()->isAjax() ? 'json' : 'html';
     }
 }
