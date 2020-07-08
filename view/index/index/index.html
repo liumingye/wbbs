@@ -10,7 +10,7 @@
 
     /* 发布框 */
     .send_post {
-        margin-top: -20px;
+        margin-top: -16px;
     }
 
     .send_post .card {
@@ -31,6 +31,25 @@
 
     .input_post:focus {
         box-shadow: none;
+    }
+
+    .send_post .dropzone {
+        min-height: 0;
+        border: none;
+        padding: 0;
+    }
+
+    .send_post .dz-default {
+        display: none;
+    }
+
+    .shade {
+        background: #1DA1F3;
+    }
+
+    .shade img {
+        margin: 0 auto;
+        width: 100%;
     }
 
     /* 发布功能 */
@@ -57,18 +76,40 @@
         font-size: 24px;
         vertical-align: text-top;
     }
+
+    /* 推文内容 */
+    .post-image-col {
+        float: left;
+        margin: 4px 0 0 4px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #f2f2f5;
+        width: 140px;
+        height: 140px;
+    }
+
+    .post-image-row img {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.7.1/dist/dropzone.min.css">
 {/block}
 {block name="body"}
-<div class="send_post">
+<form class="send_post">
     <div class="card">
-        <form class="card-body row no-gutters mt-2">
+        {if $user}
+        <div class="card-body row no-gutters">
             <div class="mr-3">
                 <img class="rounded-circle" src="{if $user}{$user.avatar_url}{else}__IMG__/logo.svg{/if}" width="48" height="48">
             </div>
             <div class="col">
-                <form class="form-group">
+                <div class="form-group">
                     <textarea class="form-control input_post" rows="1" placeholder="有什么新鲜事想告诉大家？" name="text"></textarea>
+                    <div class="img-dropzone dropzone"></div>
                     <div class="row no-gutters border-top func_area">
                         <div class="kind flex-fill mt-2 mr-3">
                             <a href="javascrpit:;"><i class="la la-smile"></i></a>
@@ -77,89 +118,93 @@
                             <a href="javascrpit:;"><i class="la la-hashtag"></i></a>
                         </div>
                         <div class="flex-row-reverse mt-2">
-                            <button type="button" class="btn btn-primary rounded-pill">推文</button>
+                            <button type="submit" class="btn btn-primary rounded-pill">推文</button>
                         </div>
                     </div>
-                </form>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="line"></div>
-<div id="feed_list">
-    {foreach $list as $key=>$vo}
-    <div class="card">
-        <div class="card-body row no-gutters">
-            <div class="mr-3">
-                <img class="rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48">
-            </div>
-            <div class="col">
-                <h5 class="card-title font-weight-bold">{$vo.user.nickname}{$vo.id}</h5>
-                <p class="card-text">{$vo.text}</p>
+                </div>
             </div>
         </div>
+        {else}
+        <div class="shade"><img src="https://ae01.alicdn.com/kf/Hd20987e65e264e49b7262cc3648f8c24h.jpg"></div>
+        {/if}
     </div>
-    {/foreach}
+</form>
+<div class="line"></div>
+<div id="feed_list">
+    <div class="list">
+        {foreach $list as $key=>$vo}
+        <div class="card">
+            <div class="card-body row no-gutters">
+                <div class="mr-3">
+                    <img class="rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48">
+                </div>
+                <div class="col">
+                    <h5 class="card-title font-weight-bold">{$vo.user.nickname}</h5>
+                    <p class="card-text">{$vo.text}</p>
+                    {if !empty($vo.image)}
+                    <div class="post-image-row">
+                        {volist name="vo.image" id="url"}
+                        <div class="post-image-col">
+                            <img src="{$url}">
+                        </div>
+                        {/volist}
+                    </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        {if $page * $length < $total} <a href="{:url('/',['page'=>$page+1])}" class="load-list btn btn-primary btn-block w-75 my-3 mx-auto">显示更多</a>
+            {/if}
+    </div>
 </div>
-<button type="button" class="btn btn-primary btn-block w-75 my-3 mx-auto">显示更多</button>
 {/block}
 {block name="foot"}
+<script src="https://cdn.jsdelivr.net/npm/dropzone@5.7.1/dist/dropzone.min.js"></script>
 <script>
-	/**
-	 * 文件打开函数
-	 * @param callback 回调函数
-	 */
-    /*var openFile = function (callback) {
-        $('.openFile').remove();
-        var input = $('<input class="openFile" type="file" multiple>');
-        input.on("propertychange change", callback);
-        $('body').append(input);
-        input.click();
-    }*/
-	/**
-	 * 文件上传函数
-	 * @param file 文件
-	 * @param callback 回调函数 
-	 */
-    /*var uploadFile = function (files, callback) {
-        var imageData = new FormData();
-        imageData.append("files", files);
-        $.ajax({
-            url: '{:url("/upload/upload")}',
-            type: 'POST',
-            data: imageData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            dataType: 'json',
-            success: function (res) {
-                if (res.code == 1) {
-                    callback.success && callback.success(res.imgurl);
-                } else {
-                    callback.error && callback.error(res.msg);
-                }
-            },
-            error: function () {
-                callback.error && callback.error('请求失败！');
-            },
-            complete: function () {
-                callback.complete && callback.complete();
-            }
-        });
-    }*/
-    // 上传图片
-    /*function uploadImg() {
-        openFile(function () {
-            var files = this.files;
-            for (var i = 0; i < files.length; i++) {
-                uploadFile(files[i], {
-                    success: function (res) {
-                        console.log(res);
+    $(function loadList() {
+        $(".load-list").click(function () {
+            var href = $(this).attr("href");
+            if (href != undefined) {
+                $.ajax({
+                    url: href,
+                    type: "get",
+                    beforeSend: function () {
+                        history.pushState(null,null,href);
+                        // _msg('鍔犺浇涓�...', 3000);
+                    },
+                    error: function (request) {
+                        // _msg('鍔犺浇澶辫触', 3000);
+                    },
+                    success: function (data) {
+                        $(".load-list").remove();
+                        var $res = $(data).find("#feed_list .list");
+                        $('#feed_list').append($res).fadeIn();
+                        loadList();
+                        // _msg('鍔犺浇瀹屾垚', 3000);
                     }
-                })
+                });
             }
+            return false;
         });
-    }*/
+    });
+
+    var dropzone = new Dropzone('.img-dropzone', {
+        url: '{:url("/upload/upload")}',
+        maxFiles: 9,
+        acceptedFiles: "image/jpg,image/jpeg,image/png,image/gif",
+        addRemoveLinks: true,
+        success: function (file, response) {
+            if (response.code != 1) {
+                alert(response.msg);
+                this.removeFile(file);
+            }
+        }
+    });
+    // 上传图片
+    function uploadImg() {
+        dropzone.clickableElements[0].click()
+    }
     jQuery.fn.extend({
         autoHeight: function () {
             return this.each(function () {
@@ -183,5 +228,33 @@
     });
     // 使用
     $('.input_post').autoHeight();
+    $('.send_post').submit(function () {
+        var form_data = $(this).serialize();
+        var image = [];
+        for (var i = 0; i < dropzone.files.length; i++) {
+            if (dropzone.files[i].status == "success") {
+                var json = JSON.parse(dropzone.files[i].xhr.response);
+                if (json.data.id) {
+                    image.push(json.data.id);
+                }
+            }
+        }
+        if (image.length != 0) {
+            form_data += "&image=" + image.join('|');
+        }
+        $.ajax({
+            url: '{:url("/post/add")}',
+            type: 'POST',
+            data: form_data,
+            success: function (res) {
+                if (res.code == 1) {
+                    location.href = location.href;
+                } else {
+                    alert(res.msg);
+                }
+            }
+        });
+        return false;
+    });
 </script>
 {/block}

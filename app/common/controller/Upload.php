@@ -18,10 +18,10 @@ class Upload
         // 比如上传的文件过大,超出了配置文件中限制的大小
         try {
             $files = request()->file($field);
+            return $this->_upload($files, $type);
         } catch (\think\Exception $e) {
             return $this->result([], '1001', $this->_languageChange($e->getMessage()));
         }
-        return $this->_upload($files, $type);
     }
     /**
      * 执行文件上传
@@ -58,7 +58,10 @@ class Upload
             $dir = 'image';
             $savename = Filesystem::disk($disks)->putFile($dir, $files, 'md5');
             $path = Filesystem::getDiskConfig($disks, 'url') . '/' . str_replace('\\', '/', $savename);
-            $file_url = $path;
+            $file_url = [
+                'url' => $path,
+                'id' => "local:$savename",
+            ];
         } else { // 上传图床
             // 文件存放目录名称
             $dir = 'tmp';
@@ -67,14 +70,16 @@ class Upload
             $class = 'app\\common\\extend\\upload\\' . ucfirst($type);
             if (class_exists($class)) {
                 $api = new $class;
-                $file_url = $api->submit($path);
+                $res = $api->submit($path);
+                $file_url['url'] = $res['url'];
+                $file_url['id'] = ucfirst($type) . ":" . $res['id'];
             }
         }
-        if ($file_url) {
+        if (isset($file_url['id'])) {
             // 返回上传成功时的数组
             return $this->result($file_url, '1', '上传成功');
         } else {
-            return $this->result([], '1004', '上传失败');
+            return $this->result([], 1004, '上传失败');
         }
     }
     /**

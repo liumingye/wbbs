@@ -8,6 +8,6 @@ class Upload extends Base
     public function upload()
     {
         $upload = new UploadController;
-        return $upload->putFile('files', 'Alibaba');
+        return $upload->putFile('file', 'Alibaba');
     }
 }

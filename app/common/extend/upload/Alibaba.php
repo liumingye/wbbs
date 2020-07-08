@@ -43,8 +43,10 @@ class Alibaba
         $json = @json_decode($html, true);
         @unlink($filePath);
         if ($json['code'] == '0') {
-            $file_path = $json['url'];
-            return $file_path;
+            $return['url'] = $json['url'];
+            preg_match('/kf\/(.*?).jpg/', $json['url'], $match);
+            $return['id'] = $match[1];
+            return $return;
         }
         return false;
     }

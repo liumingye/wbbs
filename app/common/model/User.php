@@ -33,11 +33,11 @@ class User extends Base
         if ($user->avatar) {
             $uid = $user->uid;
             $dir = substr(sprintf("%09d", $uid), 0, 3);
-            $avatar = config('wbbs.upload_url') . "/avatar/$dir/$uid.png?" . $user->avatar;
+            $avatar = url("/upload/avatar/$dir/$uid.png?" . $user->avatar);
         } elseif ($user->mail) {
             $avatar = 'https://dn-qiniu-avatar.qbox.me/avatar/' . md5($user->mail);
         } else {
-            $avatar = config('view.tpl_replace_string.__STATIC__') . '/img/avatar.png';
+            $avatar = url("/static/img/avatar.png");
         }
         $avatar && $user->setAttr('avatar_url', $avatar);
     }

@@ -16,8 +16,9 @@ class Index extends Base
         $length = 10;
         $start = ($page - 1) * $length;
         $post = new Post;
-        $list = $post->with('user')->withCache(true)->limit($start, $length)->order('create_time desc')->cache(true)->select();
-        View::assign(compact('list'));
+        $total = $post->count();
+        $list = $post->with('user')->withCache(60)->limit($start, $length)->order('create_time desc')->select();
+        View::assign(compact('list', 'page', 'length', 'total'));
         return $this->label_fetch();
     }
 }
