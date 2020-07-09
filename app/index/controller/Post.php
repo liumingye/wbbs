@@ -3,12 +3,18 @@
 namespace app\index\controller;
 
 use app\common\model\Post as PostModel;
+use app\common\model\Relationships;
+use app\common\model\Topic;
 use app\index\validate\Post as PostValidate;
 use think\exception\ValidateException;
 
 class Post extends Base
 {
     use \app\common\controller\Jump;
+    public function index()
+    {
+        echo '123';
+    }
     /**
      * 发布文章
      */
@@ -31,7 +37,7 @@ class Post extends Base
                 $validate = validate(PostValidate::class);
                 $validate->check($data);
                 $post = new PostModel;
-                // 图片处理
+                /** 图片处理 */
                 if (isset($data['image']) && $data['image']) {
                     $date_image = explode("|", $data['image']);
                     unset($data['image']);
@@ -51,8 +57,42 @@ class Post extends Base
                         $data['image'] = '';
                     }
                 }
+                /** 话题处理 */
+                $topic_pattern = "/\#([^\#|.]+)\#/";
+                preg_match_all($topic_pattern, $data['text'], $topicarr);
+                $topics = $topicarr[1];
+                $topics = array_unique($topics);
+                $topicid = [];
+                foreach ($topics as $v) {
+                    $topic = new Topic;
+                    $res = $topic->where('name', $v)->find();
+                    if (!$res) {
+                        // 创建新话题
+                        $topic->name = htmlspecialchars($v);
+                        $topic->views = 0;
+                        $topic->talks = 0;
+                        $topic->pic = "";
+                        $topic->save();
+                        array_push($topicid, $topic->id);
+                    } else {
+                        array_push($topicid, $res->id);
+                    }
+                }
+                /** 发布 */
                 $res = $post->save($data);
                 if ($res) {
+                    // 文章 关联 话题
+                    if (!empty($topicid)) {
+                        $relationships = new Relationships;
+                        $data = [];
+                        foreach ($topicid as $tid) {
+                            $data[] = [
+                                'pid' => $post->id,
+                                'tid' => $tid,
+                            ];
+                        }
+                        $relationships->saveAll($data);
+                    }
                     return $this->success('发布成功');
                 } else {
                     return $this->error('发布失败');

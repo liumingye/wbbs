@@ -20,7 +20,7 @@ class Upload
             $files = request()->file($field);
             return $this->_upload($files, $type);
         } catch (\think\Exception $e) {
-            return $this->result([], '1001', $this->_languageChange($e->getMessage()));
+            return $this->result([], 1001, $this->_languageChange($e->getMessage()));
         }
     }
     /**
@@ -47,7 +47,7 @@ class Upload
                 ]
             )->check(['file' => $files]);
         } catch (\think\exception\ValidateException $e) {
-            return $this->result([], '1003', $e->getMessage());
+            return $this->result([], 2001, $e->getMessage());
         }
         // 确定使用的磁盘
         $disks = Filesystem::getDefaultDriver();
@@ -59,7 +59,7 @@ class Upload
             $savename = Filesystem::disk($disks)->putFile($dir, $files, 'md5');
             $path = Filesystem::getDiskConfig($disks, 'url') . '/' . str_replace('\\', '/', $savename);
             $file_url = [
-                'url' => $path,
+                // 'url' => $path,
                 'id' => "local:$savename",
             ];
         } else { // 上传图床
@@ -71,15 +71,17 @@ class Upload
             if (class_exists($class)) {
                 $api = new $class;
                 $res = $api->submit($path);
-                $file_url['url'] = $res['url'];
-                $file_url['id'] = ucfirst($type) . ":" . $res['id'];
+                $file_url = [
+                    // 'url' => $res['url'],
+                    'id' => ucfirst($type) . ":" . $res['id'],
+                ];
             }
         }
         if (isset($file_url['id'])) {
             // 返回上传成功时的数组
-            return $this->result($file_url, '1', '上传成功');
+            return $this->result($file_url, 1, '上传成功');
         } else {
-            return $this->result([], 1004, '上传失败');
+            return $this->result([], 2000, '上传失败');
         }
     }
     /**

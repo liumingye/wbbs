@@ -170,27 +170,27 @@
                     url: href,
                     type: "get",
                     beforeSend: function () {
-                        history.pushState(null,null,href);
-                        // _msg('鍔犺浇涓�...', 3000);
+                        history.pushState(null, null, href);
+
                     },
                     error: function (request) {
-                        // _msg('鍔犺浇澶辫触', 3000);
+
                     },
                     success: function (data) {
                         $(".load-list").remove();
                         var $res = $(data).find("#feed_list .list");
                         $('#feed_list').append($res).fadeIn();
                         loadList();
-                        // _msg('鍔犺浇瀹屾垚', 3000);
                     }
                 });
             }
             return false;
         });
     });
-
+    Dropzone.autoDiscover = false;
     var dropzone = new Dropzone('.img-dropzone', {
         url: '{:url("/upload/upload")}',
+        type: 'POST',
         maxFiles: 9,
         acceptedFiles: "image/jpg,image/jpeg,image/png,image/gif",
         addRemoveLinks: true,
