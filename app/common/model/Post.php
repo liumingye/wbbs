@@ -24,7 +24,15 @@ class Post extends Base
                     $image[] = "https://ae01.alicdn.com/kf/{$img['id']}.jpg";
                 }
             }
-            $post->setAttr('image', $image);
+            $post->setAttr('image_format', $image);
+        }
+        if (!empty($post->text)) {
+            $tag_pattern = "/\#([^\#|.]+)\#/";
+            $text = $post->text;
+            $text = preg_replace_callback($tag_pattern, function ($match) {
+                return '<a href="' . url('/search', ['q' => "#$match[1]#"]) . '" target="_blank">#' . $match[1] . '#</a>';
+            }, $text);
+            $post->setAttr('text_format', $text);
         }
     }
 

@@ -78,11 +78,13 @@
     }
 
     /* 推文内容 */
+    .post-image-row{
+        overflow: hidden;
+    }
     .post-image-col {
         float: left;
         margin: 4px 0 0 4px;
         position: relative;
-        overflow: hidden;
         border: 1px solid #f2f2f5;
         width: 140px;
         height: 140px;
@@ -140,10 +142,12 @@
                 </div>
                 <div class="col">
                     <h5 class="card-title font-weight-bold">{$vo.user.nickname}</h5>
-                    <p class="card-text">{$vo.text}</p>
-                    {if !empty($vo.image)}
+                    {if !empty($vo.text_format)}
+                    <p class="card-text">{$vo.text_format|raw}</p>
+                    {/if}
+                    {if !empty($vo.image_format)}
                     <div class="post-image-row">
-                        {volist name="vo.image" id="url"}
+                        {volist name="vo.image_format" id="url"}
                         <div class="post-image-col">
                             <img src="{$url}">
                         </div>
