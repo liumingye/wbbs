@@ -1,0 +1,34 @@
+{foreach $list as $key=>$vo}
+<div class="card">
+    <div class="card-body row no-gutters">
+        <div class="mr-3">
+            <img class="rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48">
+        </div>
+        <div class="col">
+            <h5 class="card-title font-weight-bold">{$vo.user.nickname}</h5>
+            {if !empty($vo.text_format.text)}
+            <p class="card-text">{$vo.text_format.text|raw}</p>
+            {/if}
+            {if !empty($vo.text_format.image)}
+            <div class="post-image-row">
+                {volist name="vo.text_format.image" id="url"}
+                <div class="post-image-col">
+                    <img src="{$url}">
+                </div>
+                {/volist}
+            </div>
+            <div class="artZoomBox">
+                <div class="tool clearfix">
+                    <a class="hideImg"><i class="la la-upload"></i>收起</a>
+                    <a class="viewImg" target="_blank"><i class="la la-external-link-square-alt"></i>查看原图</a>
+                    <a class="imgRight"><i class="la la-undo-alt"></i>向右转</a>
+                    <a class="imgLeft"><i class="la la-redo-alt"></i>向左转</a>
+                </div>
+                <a class="maxImgLink"><img class="maxImg"></a>
+            </div>
+            {/if}
+        </div>
+    </div>
+</div>
+{/foreach}
+{if $page * $length < $total}<a href="{:url('/post/list',['page'=>$page+1])}" class="load-list btn btn-primary btn-block w-75 my-3 mx-auto">显示更多</a>{/if}

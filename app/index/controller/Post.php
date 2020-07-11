@@ -4,19 +4,38 @@ namespace app\index\controller;
 
 use app\common\model\Post as PostModel;
 use app\common\model\Relationships;
-use app\common\model\Topic;
 use app\index\validate\Post as PostValidate;
 use think\exception\ValidateException;
+use think\facade\View;
 
 class Post extends Base
 {
     use \app\common\controller\Jump;
+    /**
+     * 内容详细
+     */
     public function index()
     {
         echo '123';
     }
     /**
-     * 发布文章
+     * 列出内容
+     */
+    function list() {
+        $page = input('param.page', 0, 'intval');
+        if ($page < 1) {
+            $page = 1;
+        }
+        $length = 10;
+        $start = ($page - 1) * $length;
+        $post = new PostModel;
+        $total = $post->count();
+        $list = $post->with('user')->withCache(60)->limit($start, $length)->order('create_time desc')->select();
+        View::assign(compact('list', 'page', 'length', 'total'));
+        return $this->label_fetch();
+    }
+    /**
+     * 发布内容
      */
     public function add()
     {
@@ -28,6 +47,7 @@ class Post extends Base
                 'uid' => $this->user->uid,
                 'text' => input('post.text', '', 'htmlspecialchars'),
                 'image' => input('post.image', '', 'htmlspecialchars'),
+                'type' => '',
                 'status' => 1,
                 'create_time' => time(),
                 'update_time' => time(),
@@ -37,47 +57,7 @@ class Post extends Base
                 $validate = validate(PostValidate::class);
                 $validate->check($data);
                 $post = new PostModel;
-                /** 图片处理 */
-                if (isset($data['image']) && $data['image']) {
-                    $date_image = explode("|", $data['image']);
-                    unset($data['image']);
-                    if (!empty($date_image)) {
-                        $image = [];
-                        foreach ($date_image as $img) {
-                            list($type, $id) = explode(":", $img);
-                            if (isset($type) && in_array($type, ['local', 'Alibaba']) && isset($id)) {
-                                $image[] = [
-                                    'id' => $id,
-                                    'type' => $type,
-                                ];
-                            }
-                        }
-                        $data['image'] = $image;
-                    } else {
-                        $data['image'] = '';
-                    }
-                }
-                /** 话题处理 */
-                $topic_pattern = "/\#([^\#|.]+)\#/";
-                preg_match_all($topic_pattern, $data['text'], $topicarr);
-                $topics = $topicarr[1];
-                $topics = array_unique($topics);
-                $topicid = [];
-                foreach ($topics as $v) {
-                    $topic = new Topic;
-                    $res = $topic->where('name', $v)->find();
-                    if (!$res) {
-                        // 创建新话题
-                        $topic->name = htmlspecialchars($v);
-                        $topic->views = 0;
-                        $topic->talks = 0;
-                        $topic->pic = "";
-                        $topic->save();
-                        array_push($topicid, $topic->id);
-                    } else {
-                        array_push($topicid, $res->id);
-                    }
-                }
+                $data['text'] = $post->handle($data['text'], $data['image']);
                 /** 发布 */
                 $res = $post->save($data);
                 if ($res) {
@@ -105,4 +85,5 @@ class Post extends Base
             return $this->error('请先登录');
         }
     }
+
 }
