@@ -216,6 +216,9 @@ a:hover {
 }
 
 /* 推文内容 */
+.post:hover {
+  background-color: #f5f8fa;
+}
 .post-image-row {
   overflow: hidden;
 }
@@ -298,20 +301,47 @@ a.artZoom span.loading {
 .artZoomBox .tool a:last-child {
   border-right: none;
 }
-.artZoomBox a.maxImgLink .maxImg {
+.artZoomBox .maxImgRow .maxImg {
   padding: 5px;
   background: #fff;
   max-width: 100%;
+  cursor: zoom-out;
 }
-.imgZoomBox .maxImgLink .maxImg,
-.imgZoomBox .tool span {
-  border-color: #ccc;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-box-shadow: 0 0 3px rgba(58, 110, 165, 0.5);
-  -webkit-box-shadow: 0 0 3px rgba(58, 110, 165, 0.5);
-  box-shadow: 0 0 3px rgba(58, 110, 165, 0.5);
+#feed_list .stamp {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+  font-weight: normal;
+}
+#feed_list .handle {
+  border-top: 1px solid #e6ecf0;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: -10px;
+  margin: 15px -15px -10px;
+  padding-top: 5px;
+  padding: 5px 15px 0;
+}
+#feed_list .handle .col {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+#feed_list .handle i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 14px;
+  margin-right: 5px;
+  transition: 0.2s background-color ease-in-out;
+}
+#feed_list .handle i:hover {
+  
 }
 
 /* md */

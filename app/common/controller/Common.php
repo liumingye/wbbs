@@ -12,7 +12,7 @@ class Common
      * @param string $salt 扰码
      * @return string
      */
-    public static function hashStr($string, $salt = NULL)
+    public static function hashStr($string, $salt = null)
     {
         /** 生成随机字符串 */
         $salt = empty($salt) ? \think\helper\Str::random(9) : $salt;
@@ -51,4 +51,39 @@ class Common
             return md5($from) === $to;
         }
     }
+
+    /**
+     * 时间戳翻译
+     */
+    public static function time_tran($time)
+    {
+        $time = strtotime($time);
+        if (date("Y", $time) == date("Y", time())) {
+            $rtime = date("m月d日 H:i", $time);
+        } else {
+            $rtime = date("y-m-d H:i", $time);
+        }
+        $htime = date("H:i", $time);
+        $time = time() - $time;
+        if ($time < 60) {
+            $str = '刚刚';
+        } elseif ($time < 60 * 60) {
+            $min = floor($time / 60);
+            $str = $min . '分钟前';
+        } elseif ($time < 60 * 60 * 24) {
+            $h = floor($time / (60 * 60));
+            $str = $h . '小时前 ' . $htime;
+        } elseif ($time < 60 * 60 * 24 * 3) {
+            $d = floor($time / (60 * 60 * 24));
+            if ($d == 1) {
+                $str = '昨天 ' . $htime;
+            } else {
+                $str = '前天 ' . $htime;
+            }
+        } else {
+            $str = $rtime;
+        }
+        return $str;
+    }
+
 }
