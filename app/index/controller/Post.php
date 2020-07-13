@@ -46,7 +46,6 @@ class Post extends Base
             $data = [
                 'uid' => $this->user->uid,
                 'text' => input('post.text', '', 'htmlspecialchars'),
-                'image' => input('post.image', '', 'htmlspecialchars'),
                 'type' => '',
                 'status' => 1,
                 'create_time' => time(),
@@ -57,7 +56,8 @@ class Post extends Base
                 $validate = validate(PostValidate::class);
                 $validate->check($data);
                 $post = new PostModel;
-                $data['text'] = $post->handle($data['text'], $data['image']);
+                $data['text'] = $post->handle($data['text'], input('post.image', '', 'htmlspecialchars'));
+                
                 /** 发布 */
                 $res = $post->save($data);
                 if ($res) {

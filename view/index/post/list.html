@@ -24,10 +24,10 @@
                 <div class="tool clearfix">
                     <a href="javascript:;" class="hideImg"><i class="la la-upload"></i>收起</a>
                     <a href="javascript:;" class="viewImg"><i class="la la-external-link-square-alt"></i>查看原图</a>
-                    <a href="javascript:;" class="imgLeft"><i class="la la-undo-alt"></i>向左转</a>
-                    <a href="javascript:;" class="imgRight"><i class="la la-redo-alt"></i>向右转</a>
+                    <a href="javascript:;" class="imgLeft"><i class="la la-undo-alt"></i>向左旋转</a>
+                    <a href="javascript:;" class="imgRight"><i class="la la-redo-alt"></i>向右旋转</a>
                 </div>
-                <div class="maxImgRow"><img class="maxImg"></div>
+                <div class="maxImgRow"></div>
             </div>
             {/if}
         </div>
@@ -35,19 +35,22 @@
             <div class="col">
                 <i class="la la-eye"></i>{$vo.view_num}
             </div>
-            <div class="col">
+            <div class="col relay">
                 <i class="la la-share"></i>{$vo.relay_num}
             </div>
-            <div class="col">
+            <div class="col reply">
                 <i class="la la-comment"></i>{$vo.reply_num}
             </div>
-            <div class="col">
+            <div class="col like">
                 <i class="la la-heart-o"></i>{$vo.like_num}
             </div>
-            {if $vo.uid==$user.uid}
-            <div class="col">
-                删除
+            <div class="col more">
+                <i class="la la-ellipsis-h"></i>
             </div>
+            {if $vo.uid==$user.uid}
+            <!-- <div class="col">
+                删除
+            </div> -->
             {/if}
         </div>
     </div>

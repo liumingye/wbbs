@@ -301,10 +301,13 @@ a.artZoom span.loading {
 .artZoomBox .tool a:last-child {
   border-right: none;
 }
+.artZoomBox .maxImgRow {
+  display: flex;
+}
 .artZoomBox .maxImgRow .maxImg {
-  padding: 5px;
   background: #fff;
   max-width: 100%;
+  margin: 0 auto;
   cursor: zoom-out;
 }
 #feed_list .stamp {
@@ -317,10 +320,7 @@ a.artZoom span.loading {
   border-top: 1px solid #e6ecf0;
   justify-content: space-between;
   align-items: center;
-  margin-top: 15px;
-  margin-bottom: -10px;
-  margin: 15px -15px -10px;
-  padding-top: 5px;
+  margin: 15px -20px -15px;
   padding: 5px 15px 0;
 }
 #feed_list .handle .col {
@@ -340,10 +340,26 @@ a.artZoom span.loading {
   margin-right: 5px;
   transition: 0.2s background-color ease-in-out;
 }
-#feed_list .handle i:hover {
-  
+#feed_list .handle .col{
+  cursor: pointer;
+}
+#feed_list .handle .col:hover{
+  color: #1da1f2;
+}
+#feed_list .handle .col:hover i{
+  background-color: #1da1f21a;
 }
 
+/* sm */
+@media (min-width: 576px) {
+  #feed_list .handle .more{
+    justify-content: flex-end;
+    max-width: 0;
+  }
+  #feed_list .handle .more i{
+    min-width: 40px;
+  }
+}
 /* md */
 @media (max-width: 768px) {
   .left-nav {

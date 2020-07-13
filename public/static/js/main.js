@@ -56,41 +56,34 @@ function getmatrix(deg) {
 }
 /* 文章图片 */
 function picctrl() {
-    $('.post-image-col:not(".init")').click(function () {
+    $('.post-image-col:not(".init")').addClass('init').click(function () {
         var that = $(this);
-        that.addClass('init').parent().hide();
+        that.parent().hide();
         var artZoomBox = that.parent().next();
-        artZoomBox.find('.maxImgRow img').attr('src', that.find('img').attr('src')).removeAttr('style').click(function () {
+        var img = $('<img class="maxImg" src="' + that.find('img').attr('src') + '">');
+        img.drawImage(function () {
             $(this).parent().prev().find('.hideImg').click();
         });
+        artZoomBox.find('.maxImgRow').html(img);
         artZoomBox.show();
+
         $('.hideImg').unbind('click').click(function () {
             $(this).parent().parent().hide().prev().show();
-
         });
         $('.viewImg').unbind('click').click(function () {
             openUrl($(this).parent().next().find('img').attr('src'));
         });
         $('.imgLeft').unbind('click').click(function () {
-            var r = getmatrix($(this).parent().next().find('img').css('transform'));
-            r -= 90;
-            if (r == -90 || r == 90) {
-                $(this).parent().next().find('img').css('height', $(this).parent().next().width());
-            } else {
-                $(this).parent().next().find('img').css('height', '');
-            }
-            $(this).parent().next().find('img').css('transform', 'rotate(' + r + 'deg)');
-
+            var img = $(this).parent().next().find('.maxImg');
+            img.rotateLeft(90, function () {
+                $(this).parent().prev().find('.hideImg').click();
+            });
         });
         $('.imgRight').unbind('click').click(function () {
-            var r = getmatrix($(this).parent().next().find('img').css('transform'));
-            r += 90;
-            if (r == 270 || r == 90) {
-                $(this).parent().next().find('img').css('height', $(this).parent().next().width());
-            } else {
-                $(this).parent().next().find('img').css('height', '');
-            }
-            $(this).parent().next().find('img').css('transform', 'rotate(' + r + 'deg)');
+            var img = $(this).parent().next().find('.maxImg');
+            img.rotateRight(90, function () {
+                $(this).parent().prev().find('.hideImg').click();
+            });
         });
     });
 }
