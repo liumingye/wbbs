@@ -19,6 +19,8 @@ a:hover {
   margin: 0 !important;
 }
 .toptip {
+  display: flex;
+  align-items: center;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -27,8 +29,28 @@ a:hover {
   font-weight: 600;
   border-bottom: 1px solid rgb(230, 236, 240);
   background-color: #fff;
-  line-height: 53px;
-  height: 53px;
+  line-height: 54px;
+  height: 54px;
+}
+.toptip > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
+  border-radius: 50%;
+  color: #1da1f2;
+  margin-right: 10px;
+}
+.toptip > a i{
+  font-size: 20px;
+  margin-top: 2px;
+}
+.toptip>a:hover {
+  text-decoration: none;
+  color: #1da1f2;
+  background-color: #1da1f21a;
 }
 .line {
   background-color: rgb(230, 236, 240);
@@ -158,9 +180,6 @@ a:hover {
 .feed .card {
   border: none;
   border-bottom: 1px solid rgb(230, 236, 240);
-}
-.send_post {
-  margin-top: -16px;
 }
 .send_post .card {
   border-radius: 0;
@@ -311,6 +330,7 @@ a.artZoom span.loading {
   cursor: zoom-out;
 }
 #feed_list .stamp {
+  margin: 0;
   font-size: 12px;
   color: #999;
   margin-top: 4px;
@@ -327,6 +347,7 @@ a.artZoom span.loading {
   display: flex;
   align-items: center;
   user-select: none;
+  color: #212529;
 }
 #feed_list .handle i {
   display: flex;
@@ -340,23 +361,23 @@ a.artZoom span.loading {
   margin-right: 5px;
   transition: 0.2s background-color ease-in-out;
 }
-#feed_list .handle .col{
+#feed_list .handle .col {
   cursor: pointer;
 }
-#feed_list .handle .col:hover{
+#feed_list .handle .col:hover {
   color: #1da1f2;
 }
-#feed_list .handle .col:hover i{
+#feed_list .handle .col:hover i {
   background-color: #1da1f21a;
 }
 
 /* sm */
 @media (min-width: 576px) {
-  #feed_list .handle .more{
+  #feed_list .handle .more {
     justify-content: flex-end;
     max-width: 0;
   }
-  #feed_list .handle .more i{
+  #feed_list .handle .more i {
     min-width: 40px;
   }
 }

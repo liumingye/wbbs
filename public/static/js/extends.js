@@ -60,11 +60,9 @@ jQuery.fn.rotate = function (angle, click, whence) {
 		canvas.className = 'maxImg';
 		canvas.angle = p.angle;
 		if (click) {
-			$(canvas).click(click);
+			canvas.onclick = click;
 		}
-		$(p).replaceWith(canvas);
-
-		// p.parentNode.replaceChild(canvas, p);
+		p.parentNode.replaceChild(canvas, p);
 	}
 }
 jQuery.fn.drawImage = function (click) {

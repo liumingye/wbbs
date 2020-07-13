@@ -1,0 +1,76 @@
+{extend name="public/base"}
+{block name="title"}{$config['title']} - {$config['description']}{/block}
+{block name="toptip"}主页{/block}
+{block name="head"}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.7.1/dist/dropzone.min.css">
+{/block}
+{block name="toptip"}
+<a href="{:url('/')}" title="返回首页"><i class="la la-arrow-left"></i></a>
+<div>主题帖</div>
+{/block}
+{block name="body"}
+<div id="feed_list">
+    <div class="post card">
+        <div class="card-body no-gutters">
+            <div class="col mb-1">
+                <div class="row no-gutters">
+                    <img class="mr-2 rounded-circle" src="{$info.user.avatar_url}" width="48" height="48">
+                    <h5 class="mt-1 col card-title font-weight-bold">{$info.user.nickname}<p class="stamp">{:app\\common\\controller\\Common::time_tran($info.create_time)}</p>
+                    </h5>
+                </div>
+            </div>
+            <div class="col">
+                {if !empty($info.text_format.text)}
+                <p class="card-text">{$info.text_format.text|raw}</p>
+                {/if}
+                {if !empty($info.text_format.image)}
+                <div class="post-image-row">
+                    {volist name="info.text_format.image" id="url"}
+                    <div class="post-image-col">
+                        <img src="{$url}">
+                    </div>
+                    {/volist}
+                </div>
+                <div class="artZoomBox">
+                    <div class="tool clearfix">
+                        <a href="javascript:;" class="hideImg"><i class="la la-upload"></i>收起</a>
+                        <a href="javascript:;" class="viewImg" target="_blank"><i class="la la-external-link-square-alt"></i>查看原图</a>
+                        <a href="javascript:;" class="imgLeft"><i class="la la-undo-alt"></i>向左旋转</a>
+                        <a href="javascript:;" class="imgRight"><i class="la la-redo-alt"></i>向右旋转</a>
+                    </div>
+                    <div class="maxImgRow"></div>
+                </div>
+                {/if}
+            </div>
+            <div class="handle row">
+                <div class="col">
+                    <i class="la la-eye"></i>{$info.view_num}
+                </div>
+                <div class="col relay">
+                    <i class="la la-share"></i>{$info.relay_num}
+                </div>
+                <div class="col reply">
+                    <i class="la la-comment"></i>{$info.reply_num}
+                </div>
+                <div class="col like">
+                    <i class="la la-heart-o"></i>{$info.like_num}
+                </div>
+                <div class="col more">
+                    <i class="la la-ellipsis-h"></i>
+                </div>
+                {if $info.uid==$user.uid}
+                <!-- <div class="col">
+                    删除
+                </div> -->
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="foot"}
+<script src="__JS__/extends.js"></script>
+<script>
+picctrl();
+</script>
+{/block}

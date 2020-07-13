@@ -14,14 +14,27 @@ class Post extends Base
     /**
      * 内容详细
      */
-    public function index()
+    public function info()
     {
-        echo '123';
+        $id = input('param.id', null, 'intval');
+        if ($id <= 0) {
+            return redirect(url('/', ['page' => input('param.page', 1)]));
+        }
+        $post = new PostModel;
+        $info = $post->with('user')->where('id', $id)->cache('post_info_' . $id)->find();
+        if (empty($info)) {
+            return $this->error('未找到此文章');
+        }
+        View::assign(compact('info'));
+        return $this->label_fetch();
     }
     /**
      * 列出内容
      */
     function list() {
+        if (!request()->isPost()) {
+            return redirect(url('/', ['page' => input('param.page', 1)]));
+        }
         $page = input('param.page', 0, 'intval');
         if ($page < 1) {
             $page = 1;
@@ -57,7 +70,7 @@ class Post extends Base
                 $validate->check($data);
                 $post = new PostModel;
                 $data['text'] = $post->handle($data['text'], input('post.image', '', 'htmlspecialchars'));
-                
+
                 /** 发布 */
                 $res = $post->save($data);
                 if ($res) {

@@ -5,7 +5,7 @@ $('#mobile-nav').click(function () {
 function htmlget(url, dom, fuc) {
     $.ajax({
         url: url,
-        type: 'GET',
+        type: 'POST',
         success: function (res) {
             dom.append(res);
             // 加载更多
@@ -60,18 +60,16 @@ function picctrl() {
         var that = $(this);
         that.parent().hide();
         var artZoomBox = that.parent().next();
-        var img = $('<img class="maxImg" src="' + that.find('img').attr('src') + '">');
+        var src = that.find('img').attr('src');
+        var img = $('<img class="maxImg" src="' + src + '">');
         img.drawImage(function () {
             $(this).parent().prev().find('.hideImg').click();
         });
         artZoomBox.find('.maxImgRow').html(img);
         artZoomBox.show();
-
+        $('.viewImg').attr('href', src);
         $('.hideImg').unbind('click').click(function () {
             $(this).parent().parent().hide().prev().show();
-        });
-        $('.viewImg').unbind('click').click(function () {
-            openUrl($(this).parent().next().find('img').attr('src'));
         });
         $('.imgLeft').unbind('click').click(function () {
             var img = $(this).parent().next().find('.maxImg');

@@ -7,19 +7,19 @@ use think\facade\Filesystem;
 class Post extends Base
 {
     /**
-     * JOIN 用户表
-     */
-    public function user()
-    {
-        return $this->hasOne('User', 'uid', 'uid');
-    }
-
-    /**
      * 模型事件 查询后
      */
     public static function onAfterRead($post)
     {
         $post->setAttr('text_format', self::parse($post->text));
+    }
+
+    /**
+     * 关联 用户表
+     */
+    public function user()
+    {
+        return $this->hasOne('User', 'uid', 'uid');
     }
 
     /**
@@ -96,9 +96,11 @@ class Post extends Base
         $r = array(
         );
         $text = preg_replace($p, $r, $text);*/
+        // 话题
         $text = preg_replace_callback('/\[T\](.*?)\[\/T\]/i', function ($match) {
             return '<a href="' . url('/search', ['q' => "#$match[1]#"]) . '" target="_blank">#' . $match[1] . '#</a>';
         }, $text);
+        // 图片
         $image = [];
         $text = preg_replace_callback('/\[F](.*?)\[\/F\]/i', function ($match) use (&$image) {
             list($type, $id) = explode(':', $match[1]);

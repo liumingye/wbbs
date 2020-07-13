@@ -6,7 +6,7 @@ class Search extends Base
 {
     public function index()
     {
-        $keyword = input('get.q');
+        $keyword = input('param.q');
         echo '搜索' . $keyword;
     }
 }
