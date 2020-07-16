@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 
+use app\common\model\Comment;
 use think\facade\Filesystem;
 
 class Post extends Base
@@ -20,6 +21,17 @@ class Post extends Base
     public function user()
     {
         return $this->hasOne('User', 'uid', 'uid');
+    }
+
+    /**
+     * 关联 评论表
+     */
+    public function comment()
+    {
+        $comments = $this->hasMany('Comment', 'pid');
+        $comment = new Comment;
+        $comments = $comment->nestable($comments);
+        return $comments;
     }
 
     /**

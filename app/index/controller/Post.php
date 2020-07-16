@@ -21,12 +21,22 @@ class Post extends Base
             return redirect(url('/', ['page' => input('param.page', 1)]));
         }
         $post = new PostModel;
-        $info = $post->with('user')->where('id', $id)->cache('post_info_' . $id)->find();
+        $info = $post->with(['user', 'comment', 'comment.user'])->where('id', $id)->cache('post_info_' . $id)->find();
+
+        // print_r($info->comment->toArray());
+
         if (empty($info)) {
             return $this->error('未找到此文章');
         }
         View::assign(compact('info'));
         return $this->label_fetch();
+    }
+    /**
+     * 列出评论
+     */
+    public function comment()
+    {
+
     }
     /**
      * 列出内容

@@ -67,6 +67,25 @@
         </div>
     </div>
 </div>
+<div id="comments">
+    <div class="comment-list">
+        {foreach $info.comment as $key=>$vo} 
+        <div class="comment-body">
+            <div class="row">
+                <div class="col">
+                    <div class="a-avatar d-flex flex-column">
+                        <img src="//gravatar.helingqi.com/wavatar/11f4a7985bd2951717274c1fad92ce3e?d=mm&amp;r=G" width="43" height="43" alt="真真此次">
+                    </div>
+                </div>
+                <div class="col">
+                    <p>{$vo.user.nickname}</p>
+                    <p>{$vo.text}</p>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>
 {/block}
 {block name="foot"}
 <script src="__JS__/extends.js"></script>
