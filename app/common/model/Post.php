@@ -2,7 +2,6 @@
 
 namespace app\common\model;
 
-use app\common\model\Comment;
 use think\facade\Filesystem;
 
 class Post extends Base
@@ -28,10 +27,7 @@ class Post extends Base
      */
     public function comment()
     {
-        $comments = $this->hasMany('Comment', 'pid');
-        $comment = new Comment;
-        $comments = $comment->nestable($comments);
-        return $comments;
+        return $this->hasMany('Comment', 'pid');
     }
 
     /**

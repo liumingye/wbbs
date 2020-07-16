@@ -370,7 +370,88 @@ a.artZoom span.loading {
 #feed_list .handle .col:hover i {
   background-color: #1da1f21a;
 }
-
+/* 评论 */
+#comments{
+  margin-top: 10px;
+}
+.comment-list{
+  border-top: 1px solid #e6ecf0;
+}
+.comments-title{
+  font-size: 18px;
+  padding: 0 10px;
+}
+.comment-form{
+  padding: 10px;
+}
+.comment-textarea{
+  border-radius: 5px;
+  border: solid 1px #e6ecf0;
+  padding: 10px;
+  min-width: 240px;
+}
+.comment-body{
+  padding: 10px 10px 0;
+  border-bottom: 1px solid #e6ecf0;
+}
+.comment-body:hover{
+  background-color:#f5f8fa;
+}
+.a-avatar img{
+  border-radius: 50%;
+}
+.author{
+  flex-grow: 1;
+  margin-left: 10px;
+}
+.comment-author{
+  font-weight: bold;
+}
+.comment-author a{
+  color: #212529;
+}
+.comment-time{
+  font-size: 12px;
+  color: #818181;
+}
+.comment-content p{
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+.comment-children{
+  margin-left: 20px;
+}
+.comment-children .author{
+  padding: 10px 0 0;
+  border-top: 1px solid #e6ecf0;
+}
+.comment-children .a-avatar{
+  margin-top: 10px;
+}
+/* 分页 */
+.page-Link{
+  margin: 20px auto;
+  justify-content: center;
+}
+.page-Link>ol{
+  margin: 0;
+  padding: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.page-Link>ol>li {
+  list-style: none;
+}
+.page-Link>ol>li>a,.page-Link>ol>li>span  {
+  display: block;
+  font-size: 12px;
+  padding: 5px 10px;
+  background: #f5f8fa;
+}
+.page-Link>ol>li.current>a {
+  background: #1da1f2;
+  color: #fff;
+}
 /* sm */
 @media (min-width: 576px) {
   #feed_list .handle .more {

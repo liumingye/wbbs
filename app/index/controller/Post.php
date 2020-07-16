@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use app\common\model\Comment;
 use app\common\model\Post as PostModel;
 use app\common\model\Relationships;
 use app\index\validate\Post as PostValidate;
@@ -21,22 +22,30 @@ class Post extends Base
             return redirect(url('/', ['page' => input('param.page', 1)]));
         }
         $post = new PostModel;
-        $info = $post->with(['user', 'comment', 'comment.user'])->where('id', $id)->cache('post_info_' . $id)->find();
+        $info = $post->with(['user', 'comment.user' => function ($query) {
+            $query->order('create_time desc')->limit(0, 10);
+        }])->withCache(30)->cache('post_info_' . $id)->where('id', $id)->find();
 
-        // print_r($info->comment->toArray());
+        $comment = new Comment;
+        $comments = $comment->getSubTree($info->comment);
 
         if (empty($info)) {
             return $this->error('未找到此文章');
         }
-        View::assign(compact('info'));
+        View::assign(compact('info', 'comments'));
         return $this->label_fetch();
     }
     /**
-     * 列出评论
+     * 列出评论 & 提交评论
      */
     public function comment()
     {
-
+        $id = input('param.id', null, 'intval');
+        $comment = new Comment;
+        $comments = $comment->where('pid', $id)->select();
+        $comments = $comment->getSubTree($comments);
+        View::assign(compact('comments'));
+        return $this->label_fetch();
     }
     /**
      * 列出内容

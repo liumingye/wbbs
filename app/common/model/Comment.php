@@ -4,32 +4,31 @@ namespace app\common\model;
 
 class Comment extends Base
 {
+    /**
+     * 模型事件 查询后
+     */
+    public static function onAfterRead($comment)
+    {
+        $comment->setAttr('text_format', "<p>" . htmlspecialchars($comment->text) . "</p>");
+    }
     public function commentable()
     {
         return $this->morphTo();
-    }
-    public function parent()
-    {
-        return $this->belongsTo(self::class, 'parent');
-    }
-    public function children()
-    {
-        return $this->hasMany(self::class, 'parent');
     }
     public function user()
     {
         return $this->hasOne('User', 'uid', 'uid');
     }
-    public function nestable($comments, $parent = 0)
+    public function getSubTree($data, $pid = 0)
     {
-        foreach ($comments as $key => $val) {
-            $comments[$key]['aaa'] = 0;
-            $val->aaa = 0;
-            if (!$val->parent->isEmpty()) {
-                $val->aa = $this->nestable($comments, $val->parent);
+        $tmp = array();
+        foreach ($data as $value) {
+            if ($value['parent'] == $pid) {
+                $value['child'] = $this->getSubTree($data, $value['id']);
+                $tmp[] = $value;
             }
         }
-        return $comments;
+        return $tmp;
     }
 
 }

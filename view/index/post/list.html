@@ -4,8 +4,10 @@
         <div class="col mb-1">
             <div class="row no-gutters">
                 <img class="mr-2 rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48">
-                <h5 class="mt-1 col card-title font-weight-bold">{$vo.user.nickname}<p class="stamp">{:app\\common\\controller\\Common::time_tran($vo.create_time)}</p>
-                </h5>
+                <div class="flex-grow-1">
+                    <div class="font-weight-bold">{$vo.user.nickname}</div>
+                    <div class="stamp">{:app\\common\\controller\\Common::time_tran($vo.create_time)}</div>
+                </div>
             </div>
         </div>
         <div class="col">

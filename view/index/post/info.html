@@ -15,8 +15,10 @@
             <div class="col mb-1">
                 <div class="row no-gutters">
                     <img class="mr-2 rounded-circle" src="{$info.user.avatar_url}" width="48" height="48">
-                    <h5 class="mt-1 col card-title font-weight-bold">{$info.user.nickname}<p class="stamp">{:app\\common\\controller\\Common::time_tran($info.create_time)}</p>
-                    </h5>
+                    <div class="flex-grow-1">
+                        <div class="font-weight-bold">{$info.user.nickname}</div>
+                        <div class="stamp">{:app\\common\\controller\\Common::time_tran($info.create_time)}</div>
+                    </div>
                 </div>
             </div>
             <div class="col">
@@ -68,22 +70,69 @@
     </div>
 </div>
 <div id="comments">
+    <div class="respond">
+        <div class="comments-title">发表评论</div>
+        <form method="post" action="{:url('/post/comment',['id'=>$info.id])}" class="comment-form d-flex flex-column">
+            <textarea rows="5" cols="50" name="text" class="comment-textarea" required></textarea>
+            <div class="d-flex pt-2">
+                <div class="flex-grow-1">
+                    表情
+                    图片
+                    同时转发到我的微博
+                </div>
+                <button type="submit" class="btn btn-primary">评论</button>
+            </div>
+        </form>
+    </div>
     <div class="comment-list">
-        {foreach $info.comment as $key=>$vo} 
+        {foreach $comments as $vo} 
         <div class="comment-body">
-            <div class="row">
-                <div class="col">
+            <div class="d-flex">
+                    <div class="d-flex flex-column">
+                        <div class="a-avatar d-flex flex-column">
+                            <img src="{$vo.user.avatar_url}" width="43" height="43">
+                        </div>
+                    </div>
+                    <div class="author d-flex flex-column">
+                        <div class="flex-grow-1">
+                            <div class="comment-author">
+                                <a href="#">{$vo.user.nickname}</a>
+                            </div>
+                            <div class="comment-time">{:app\\common\\controller\\Common::time_tran($vo.create_time)}</div>
+                        </div>
+                        <div class="comment-content">{$vo.text_format|raw}</div>
+                    </div>
+            </div>
+            {foreach $vo.child as $voo}
+            <div class="d-flex comment-children">
+                <div class="d-flex flex-column">
                     <div class="a-avatar d-flex flex-column">
-                        <img src="//gravatar.helingqi.com/wavatar/11f4a7985bd2951717274c1fad92ce3e?d=mm&amp;r=G" width="43" height="43" alt="真真此次">
+                        <img src="{$voo.user.avatar_url}" width="30" height="30">
                     </div>
                 </div>
-                <div class="col">
-                    <p>{$vo.user.nickname}</p>
-                    <p>{$vo.text}</p>
+                <div class="author d-flex flex-column">
+                    <div class="flex-grow-1">
+                        <div class="comment-author">
+                            <a href="#">{$voo.user.nickname}</a>
+                        </div>
+                        <div class="comment-time">{:app\\common\\controller\\Common::time_tran($voo.create_time)}</div>
+                    </div>
+                    <div class="comment-content">{$voo.text_format|raw}</div>
                 </div>
             </div>
+            {/foreach}
         </div>
         {/foreach}
+    </div>
+    <div class="page-Link d-flex align-content-center">
+        <ol class="page-navigator d-flex">
+            <li class="current"><a href="">1</a></li>
+            <li><a href="">2</a></li>
+            <li><a href="">3</a></li>
+            <li><span>...</span></li>
+            <li><a href="">100</a></li>
+            <li class="next"><a href="">»</a></li>
+        </ol>
     </div>
 </div>
 {/block}
