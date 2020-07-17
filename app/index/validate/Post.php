@@ -22,9 +22,9 @@ class Post extends Validate
     public function isBan($value)
     {
         $user = User::where('uid', $value)->find();
-        if ($user->status == 0) {
-            return false;
+        if ($user->status == 1) {
+            return true;
         }
-        return true;
+        return false;
     }
 }

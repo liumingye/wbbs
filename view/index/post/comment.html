@@ -16,23 +16,5 @@
                 <div class="comment-content">{$vo.text_format|raw}</div>
             </div>
     </div>
-    {foreach $vo.child as $voo}
-    <div class="d-flex comment-children">
-        <div class="d-flex flex-column">
-            <div class="a-avatar d-flex flex-column">
-                <img src="{$voo.user.avatar_url}" width="30" height="30">
-            </div>
-        </div>
-        <div class="author d-flex flex-column">
-            <div class="flex-grow-1">
-                <div class="comment-author">
-                    <a href="#">{$voo.user.nickname}</a>
-                </div>
-                <div class="comment-time">{:app\\common\\controller\\Common::time_tran($voo.create_time)}</div>
-            </div>
-            <div class="comment-content">{$voo.text_format|raw}</div>
-        </div>
-    </div>
-    {/foreach}
 </div>
 {/foreach}

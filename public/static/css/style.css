@@ -390,9 +390,11 @@ a.artZoom span.loading {
   padding: 10px;
   min-width: 240px;
 }
+.comment-body > .d-flex{
+  border-bottom: 1px solid #e6ecf0;
+}
 .comment-body{
   padding: 10px 10px 0;
-  border-bottom: 1px solid #e6ecf0;
 }
 .comment-body:hover{
   background-color:#f5f8fa;

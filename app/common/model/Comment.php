@@ -19,16 +19,27 @@ class Comment extends Base
     {
         return $this->hasOne('User', 'uid', 'uid');
     }
-    public function getSubTree($data, $pid = 0)
+    /**
+     * 一维数据数组生成数据树
+     * @param array $data 数据列表
+     * @return Array
+     */
+    public function getSubTree($data)
     {
-        $tmp = array();
-        foreach ($data as $value) {
-            if ($value['parent'] == $pid) {
-                $value['child'] = $this->getSubTree($data, $value['id']);
-                $tmp[] = $value;
+        $data = $data->toArray();
+        $items = [];
+        foreach ($data as $v) {
+            $items[$v['id']] = $v;
+        }
+        $tree = [];
+        foreach ($items as $k => $item) {
+            if (isset($items[$item['parent']])) {
+                $items[$item['parent']]['child'][] = &$items[$k];
+            } else {
+                $tree[] = &$items[$k];
             }
         }
-        return $tmp;
+        return $tree;
     }
 
 }
