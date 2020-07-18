@@ -2,10 +2,9 @@
 
 namespace app\index\controller;
 
-use app\common\model\Comment;
 use app\common\model\Post as PostModel;
 use app\common\model\Relationships;
-use app\index\validate\Comment as CommentValidate;
+use app\index\controller\Comment;
 use app\index\validate\Post as PostValidate;
 use think\exception\ValidateException;
 use think\facade\View;
@@ -19,73 +18,21 @@ class Post extends Base
     public function info()
     {
         $id = input('param.id', null, 'intval');
-        if ($id <= 0) {
-            return redirect(url('/', ['page' => input('param.page', 1)]));
-        }
         $post = new PostModel;
-        $info = $post->with(['user', 'comment.user' => function ($query) {
-            $query->order('create_time desc')->limit(0, 10);
-        }])->withCache(['user'], 30)->cache('post_info_' . $id)->where('id', $id)->find();
-        $comment = new Comment;
-        $comments = $comment->getSubTree($info->comment);
+        $info = $post->with('user')->withCache(60)->cache('post_info_' . $id)->where('id', $id)->find();
         if (empty($info)) {
             return $this->error('未找到此文章');
         }
-        View::assign(compact('info', 'comments'));
-        return $this->label_fetch();
-    }
-    /**
-     * 列出评论 & 提交评论
-     */
-    public function comment()
-    {
-        if (request()->isPost()) {
-            if (!$this->user) {
-                return $this->error('请先登录');
-            }
-            $id = input('param.id', null, 'intval');
-            $parent = input('post.parent', 0, 'intval');
-            $comment = new Comment;
-            $data = [
-                'pid' => $id,
-                'uid' => $this->user->uid,
-                'text' => input('post.text', '', 'htmlspecialchars'),
-                'parent' => $parent,
-                'create_time' => time(),
-                'update_time' => time(),
-            ];
-            try {
-                /** 初始化验证类 */
-                $validate = validate(CommentValidate::class);
-                $validate->check($data);
-                $comment = new Comment;
-                $res = $comment->save($data);
-                if ($res) {
-                    return $this->success('评论成功');
-                } else {
-                    return $this->error('评论失败');
-                }
-            } catch (ValidateException $e) {
-                /** 设置提示信息 */
-                return $this->error($e->getError());
-            }
-            return $this->error('评论失败');
-        }
-        $id = input('param.id', null, 'intval');
         $comment = new Comment;
-        $comments = $comment->with('user')->where('pid', $id)->select();
-        $comments = $comment->getSubTree($comments);
-        View::assign(compact('comments'));
+        $comments = $comment->data(['pid' => $id], 1, true);
+        View::assign(compact('info', 'comments'));
         return $this->label_fetch();
     }
     /**
      * 列出内容
      */
-    function list() {
-        if (!request()->isPost()) {
-            return redirect(url('/', ['page' => input('param.page', 1)]));
-        }
-        $page = input('param.page', 0, 'intval');
+    public function data($page, $raw = false)
+    {
         if ($page < 1) {
             $page = 1;
         }
@@ -94,8 +41,12 @@ class Post extends Base
         $post = new PostModel;
         $total = $post->count();
         $list = $post->with('user')->withCache(60)->limit($start, $length)->order('create_time desc')->select();
-        View::assign(compact('list', 'page', 'length', 'total'));
-        return $this->label_fetch();
+        $data = compact('list', 'page', 'length', 'total');
+        if ($raw && !input('raw')) {
+            return $data;
+        }
+        View::assign($data);
+        return $this->result($this->label_fetch(), 1, '', 'json');
     }
     /**
      * 发布内容

@@ -13,7 +13,7 @@ class Comment extends Validate
         'uid' => ['require', 'isBan'],
         'pid' => ['require', 'isHavePid'],
         'parent' => ['isHaveParent'],
-        'text' => ['max' => 255],
+        'text' => ['max' => 140],
     ];
     protected $message = [
         'uid.require' => '请先登录',
@@ -21,7 +21,7 @@ class Comment extends Validate
         'pid.require' => '回复文章不存在',
         'pid.isHavePid' => '回复文章不存在',
         'parent.isHaveParent' => '回复评论不存在',
-        'text.require' => '最多只能输入255个文字',
+        'text.max' => '最多只能输入140个文字',
     ];
     /**
      * 文章是否存在

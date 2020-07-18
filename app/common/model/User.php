@@ -2,8 +2,6 @@
 
 namespace app\common\model;
 
-use app\common\controller\Common;
-
 class User extends Base
 {
     // 设置主键
@@ -65,7 +63,7 @@ class User extends Base
                 $token = function_exists('openssl_random_pseudo_bytes') ? bin2hex(openssl_random_pseudo_bytes(16)) : sha1(\think\helper\Str::random(20));
                 $user['token'] = $token;
                 cookie('wbbs_uid', $user['uid'], $expire);
-                cookie('wbbs_token', Common::hashStr($token), $expire);
+                cookie('wbbs_token', hashStr($token), $expire);
                 //更新最后登录时间以及验证码
                 $user = $this->find($user['uid']);
                 $user->token = $token;
@@ -96,7 +94,7 @@ class User extends Base
                 /** 验证登陆 */
                 $user = $this->cache(true)->find($cookieUid);
                 $token = cookie('wbbs_token');
-                if ($user && Common::hashValidate($user['token'], $token)) {
+                if ($user && hashValidate($user['token'], $token)) {
                     $this->_user = $user;
                     return ($this->_hasLogin = true);
                 }

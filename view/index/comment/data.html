@@ -1,0 +1,28 @@
+{foreach $comments.list as $vo}
+<div class="comment-body" id="comment-{$vo.id}">
+    <div class="d-flex">
+        <div class="d-flex flex-column">
+            <div class="a-avatar d-flex flex-column">
+                <img src="{$vo.user.avatar_url}" width="43" height="43">
+            </div>
+        </div>
+        <div class="author d-flex flex-column">
+            <div class="flex-grow-1">
+                <div class="comment-author">
+                    <a href="#">{$vo.user.nickname}</a>
+                </div>
+                <div class="comment-time">{:time_tran($vo.create_time)}</div>
+            </div>
+            <div class="comment-content">{$vo.text_format|raw}</div>
+            {if $vo.parent_count != 0}
+            <div class="comment-child">
+                <a href="#" class="comment-child-a">共{$vo.parent_count}条回复</a>
+            </div>
+            {/if}
+        </div>
+    </div>
+</div>
+{/foreach}
+{if $comments.total > $comments.limit * $comments.page + $comments.start}
+<a href="{:url('/comment/data',['id'=>input('id',null,'intval'),'page'=>$comments.page+1])}" class="load-list btn btn-primary btn-block w-75 my-3 mx-auto" data-dom=".comment-list">显示更多</a>
+{/if}

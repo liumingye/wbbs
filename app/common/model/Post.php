@@ -13,6 +13,10 @@ class Post extends Base
     {
         $post->setAttr('text_format', self::parse($post->text));
     }
+    public function listData($where, $order = "id desc", $page = 1, $limit = 10, $start = 0, $field = '*')
+    {
+        
+    }
 
     /**
      * 关联 用户表
@@ -99,12 +103,7 @@ class Post extends Base
      */
     public static function parse($text)
     {
-        /*$p = array(
-        );
-        $r = array(
-        );
-        $text = preg_replace($p, $r, $text);*/
-        // 话题
+        // $text = htmlspecialchars(htmlspecialchars_decode($text));
         $text = preg_replace_callback('/\[T\](.*?)\[\/T\]/i', function ($match) {
             return '<a href="' . url('/search', ['q' => "#$match[1]#"]) . '" target="_blank">#' . $match[1] . '#</a>';
         }, $text);
@@ -120,6 +119,8 @@ class Post extends Base
             }
             return '';
         }, $text);
+        // 使用br换行
+        $text = str_replace(["\r\n", "\n", "\r"], "<br>", $text);
         return compact('text', 'image');
     }
 }

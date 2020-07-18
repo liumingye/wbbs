@@ -41,7 +41,7 @@ abstract class BaseController
     {
         View::assign(['user' => $this->user]);
         View::assign(['config' => $this->config]);
-        $html = View::fetch($tpl);
+        $html = compressHtml(View::fetch($tpl));
         return $html;
     }
 }
