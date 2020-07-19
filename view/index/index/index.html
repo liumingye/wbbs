@@ -18,10 +18,10 @@
                     <div class="img-dropzone dropzone"></div>
                     <div class="row no-gutters border-top func_area">
                         <div class="kind flex-fill mt-2 mr-3">
-                            <a href="javascrpit:;"><i class="la la-smile"></i></a>
-                            <a href="javascrpit:;" onclick="uploadImg()"><i class="la la-image"></i></a>
-                            <a href="javascrpit:;"><i class="la la-link"></i></a>
-                            <a href="javascrpit:;"><i class="la la-hashtag"></i></a>
+                            <a href="javascript:void(0);"><i class="la la-smile"></i></a>
+                            <a href="javascript:void(0);" onclick="uploadImg()"><i class="la la-image"></i></a>
+                            <a href="javascript:void(0);"><i class="la la-link"></i></a>
+                            <a href="javascript:void(0);"><i class="la la-hashtag"></i></a>
                         </div>
                         <div class="flex-row-reverse mt-2">
                             <button type="submit" class="btn btn-primary rounded-pill">推文</button>
@@ -41,10 +41,10 @@
 </div>
 {/block}
 {block name="foot"}
-<script src="__JS__/extends.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dropzone@5.7.1/dist/dropzone.min.js"></script>
 <script>
-    bindLoadList();
+    wbbs.picctrl();
+    wbbs.bindLoadList();
     Dropzone.autoDiscover = false;
     var dropzone = new Dropzone('.img-dropzone', {
         url: '{:url("/upload/upload")}',
@@ -59,32 +59,11 @@
             }
         }
     });
-    // 上传图片
+    /* 上传图片 */
     function uploadImg() {
         dropzone.clickableElements[0].click()
     }
-    jQuery.fn.extend({
-        autoHeight: function () {
-            return this.each(function () {
-                var $this = $(this);
-                if (!$this.attr('_initAdjustHeight')) {
-                    $this.attr('_initAdjustHeight', $this.outerHeight());
-                }
-                _adjustH(this).on('input', function () {
-                    _adjustH(this);
-                });
-            });
-            /**
-             * 重置高度
-             * @param {Object} elem
-             */
-            function _adjustH(elem) {
-                var $obj = $(elem);
-                return $obj.css({ height: $obj.attr('_initAdjustHeight') }).height(elem.scrollHeight);
-            }
-        }
-    });
-    // 使用
+    /* 使用 */
     $('.input_post').autoHeight();
     $('.send_post').submit(function () {
         var form_data = $(this).serialize();

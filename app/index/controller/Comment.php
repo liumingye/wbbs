@@ -4,6 +4,8 @@ namespace app\index\controller;
 
 use app\common\model\Comment as CommentModel;
 use think\facade\View;
+use think\exception\ValidateException;
+use app\index\validate\Comment as CommentValidate;
 
 class Comment extends Base
 {
@@ -11,10 +13,10 @@ class Comment extends Base
     /**
      * 列出评论
      */
-    public function data($id, $page = 1, $raw = false)
+    public function data($pid, $page = 1, $parent = 0, $raw = false)
     {
         $comment = new CommentModel;
-        $comments = $comment->listData(['pid' => $id], 'id desc', $page);
+        $comments = $comment->listData(['pid' => $pid], $page, $parent);
         if ($raw && !input('raw')) {
             return $comments;
         }
@@ -35,7 +37,7 @@ class Comment extends Base
         $data = [
             'pid' => $id,
             'uid' => $this->user->uid,
-            'text' => input('post.text', '', 'htmlspecialchars'),
+            'text' => removeXSS(input('post.text', '', 'htmlspecialchars')),
             'parent' => $parent,
             'create_time' => time(),
             'update_time' => time(),

@@ -24,7 +24,7 @@ class Post extends Base
             return $this->error('未找到此文章');
         }
         $comment = new Comment;
-        $comments = $comment->data(['pid' => $id], 1, true);
+        $comments = $comment->data($id, 1, 0, true);
         View::assign(compact('info', 'comments'));
         return $this->label_fetch();
     }
@@ -61,19 +61,22 @@ class Post extends Base
         }
         $data = [
             'uid' => $this->user->uid,
-            'text' => input('post.text', '', 'htmlspecialchars'),
+            'text' => removeXSS(input('post.text', '', 'htmlspecialchars')),
+            'image' => removeXSS(input('post.image', '', 'htmlspecialchars')),
             'type' => '',
             'status' => 1,
             'create_time' => time(),
             'update_time' => time(),
         ];
+        if (empty($data['text']) && empty($data['image'])) {
+            return $this->error('内容不能为空');
+        }
         try {
             /** 初始化验证类 */
             $validate = validate(PostValidate::class);
             $validate->check($data);
             $post = new PostModel;
-            $data['text'] = $post->handle($data['text'], input('post.image', '', 'htmlspecialchars'));
-
+            $data['text'] = $post->handle($data['text'], $data['image']);
             /** 发布 */
             $res = $post->save($data);
             if ($res) {

@@ -377,13 +377,11 @@ a.artZoom span.loading {
   background-color: #1da1f21a;
 }
 /* 评论 */
-#comments {
+.comment-respond {
+  border-bottom: 1px solid #e6ecf0;
+}
+.comment-title {
   margin-top: 10px;
-}
-.comment-list {
-  border-top: 1px solid #e6ecf0;
-}
-.comments-title {
   font-size: 18px;
   padding: 0 10px;
 }
@@ -394,7 +392,9 @@ a.artZoom span.loading {
   border-radius: 5px;
   border: solid 1px #e6ecf0;
   padding: 10px;
-  min-width: 240px;
+}
+#cancel-comment-reply-link{
+  display: none;
 }
 .comment-body > .d-flex {
   padding: 10px 10px 0;
@@ -405,6 +405,12 @@ a.artZoom span.loading {
 }
 .a-avatar img {
   border-radius: 50%;
+}
+.comment-reply{
+  font-size: 13px;
+  text-align: center;
+  margin-top: 4px;
+  color: #212529;
 }
 .author {
   flex-grow: 1;
@@ -431,12 +437,15 @@ a.artZoom span.loading {
   font-size: 14px;
   padding: 6px 10px;
 }
+.comment-load{
+  text-align: center;
+  border-bottom: 1px solid #e6ecf0;
+}
 .comment-children {
   margin-left: 20px;
 }
 .comment-children .author {
   padding: 10px 0 0;
-  border-top: 1px solid #e6ecf0;
 }
 .comment-children .a-avatar {
   margin-top: 10px;

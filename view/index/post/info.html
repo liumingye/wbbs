@@ -35,10 +35,10 @@
                 </div>
                 <div class="artZoomBox">
                     <div class="tool clearfix">
-                        <a href="javascript:;" class="hideImg"><i class="la la-upload"></i>收起</a>
-                        <a href="javascript:;" class="viewImg" target="_blank"><i class="la la-external-link-square-alt"></i>查看原图</a>
-                        <a href="javascript:;" class="imgLeft"><i class="la la-undo-alt"></i>向左旋转</a>
-                        <a href="javascript:;" class="imgRight"><i class="la la-redo-alt"></i>向右旋转</a>
+                        <a href="javascript:void(0);" class="hideImg"><i class="la la-upload"></i>收起</a>
+                        <a href="javascript:void(0);" class="viewImg" target="_blank"><i class="la la-external-link-square-alt"></i>查看原图</a>
+                        <a href="javascript:void(0);" class="imgLeft"><i class="la la-undo-alt"></i>向左旋转</a>
+                        <a href="javascript:void(0);" class="imgRight"><i class="la la-redo-alt"></i>向右旋转</a>
                     </div>
                     <div class="maxImgRow"></div>
                 </div>
@@ -70,10 +70,10 @@
     </div>
 </div>
 <div id="comments">
-    <div class="respond">
-        <div class="comments-title">发表评论</div>
-        <form method="post" action="{:url('/post/comment',['id'=>$info.id])}" class="comment-form d-flex flex-column">
-            <textarea rows="5" cols="50" name="text" class="comment-textarea" required></textarea>
+    <div class="comment-respond">
+        <div class="comment-title">发表评论</div>
+        <form method="post" action="{:url('/comment/add',['id'=>$info.id])}" class="comment-form d-flex flex-column">
+            <textarea rows="1" name="text" class="comment-textarea" required></textarea>
             <div class="d-flex pt-2">
                 <div class="flex-grow-1">
                     表情
@@ -81,6 +81,7 @@
                     同时转发到我的微博
                 </div>
                 <button type="submit" class="btn btn-primary">评论</button>
+                <button type="button" class="ml-2 btn btn-primary" id="cancel-comment-reply-link" onclick="wbbs.cancelReply()">取消</button>
             </div>
         </form>
     </div>
@@ -90,9 +91,9 @@
 </div>
 {/block}
 {block name="foot"}
-<script src="__JS__/extends.js"></script>
 <script>
-    picctrl();
-    bindLoadList();
+    wbbs.picctrl();
+    wbbs.bindLoadList();
+    $('.comment-textarea').autoHeight();
 </script>
 {/block}

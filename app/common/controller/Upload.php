@@ -53,7 +53,8 @@ class Upload
         $disks = Filesystem::getDefaultDriver();
         // 从存放目录开始的存放路径
         $file_url = null;
-        if ($type == "") { // 上传本地
+        /* 上传本地 */
+        if ($type == "" || $type == "local") {
             // 文件存放目录名称
             $dir = 'image';
             $savename = Filesystem::disk($disks)->putFile($dir, $files, 'md5');
@@ -62,7 +63,9 @@ class Upload
                 // 'url' => $path,
                 'id' => "local:$savename",
             ];
-        } else { // 上传图床
+        }
+        /* 上传图床 */
+        else {
             // 文件存放目录名称
             $dir = 'tmp';
             $savename = Filesystem::disk($disks)->putFileAs($dir, $files, $files->hash('md5'));

@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 
+use app\common\util\HyperDown;
 use think\facade\Filesystem;
 
 class Post extends Base
@@ -15,7 +16,7 @@ class Post extends Base
     }
     public function listData($where, $order = "id desc", $page = 1, $limit = 10, $start = 0, $field = '*')
     {
-        
+
     }
 
     /**
@@ -37,7 +38,7 @@ class Post extends Base
     /**
      * 内容处理
      */
-    public function handle($content, $image, $isret = 1)
+    public function handle($content, $image)
     {
         /* 话题处理 */
         if (strpos($content, '#') !== false) {
@@ -50,36 +51,37 @@ class Post extends Base
                     $topics[] = $v;
                 }
             }
-            //update topic
-            if ($isret == 1) {
+            if (!empty($topics)) {
+                //update topic
                 $topics = array_unique($topics);
                 $db = new Topic;
                 foreach ($topics as $v) {
                     $topic = $db->where('name', $v)->find();
                     if (!$topic) {
-                        $db->name = $v;
-                        $db->talks = 1;
-                        $db->save();
+                        $db->save([
+                            'name' => $v,
+                            'talks' => 1,
+                        ]);
                         $topicid[] = $db->id;
                     } else {
                         $db->where('name', $v)->inc('talks');
                         $topicid[] = $topic->id;
                     }
                 }
-            }
-            if ($cont_sch && $cont_rpl) {
-                $cont_sch = array_unique($cont_sch);
-                $cont_rpl = array_unique($cont_rpl);
-                //按照长度排序，防止被错误替换
-                uasort($cont_sch, function ($a, $b) {
-                    return strLen($a) < strLen($b);
-                });
-                foreach ($cont_sch as $key => $val) {
-                    $cont_rpl2[$key] = $cont_rpl[$key];
+                if ($cont_sch && $cont_rpl) {
+                    $cont_sch = array_unique($cont_sch);
+                    $cont_rpl = array_unique($cont_rpl);
+                    //按照长度排序，防止被错误替换
+                    uasort($cont_sch, function ($a, $b) {
+                        return strLen($a) < strLen($b);
+                    });
+                    foreach ($cont_sch as $key => $val) {
+                        $cont_rpl2[$key] = $cont_rpl[$key];
+                    }
+                    $cont_sch = array_merge($cont_sch);
+                    $cont_rpl2 = array_merge($cont_rpl2);
+                    $content = str_replace($cont_sch, $cont_rpl2, $content);
                 }
-                $cont_sch = array_merge($cont_sch);
-                $cont_rpl2 = array_merge($cont_rpl2);
-                $content = str_replace($cont_sch, $cont_rpl2, $content);
             }
         }
         /** 图片处理 */
@@ -119,6 +121,10 @@ class Post extends Base
             }
             return '';
         }, $text);
+        // markdown
+        $parser = new HyperDown();
+        $parser->enableHtml(false);
+        $text = $parser->makeHtml($text);
         // 使用br换行
         $text = str_replace(["\r\n", "\n", "\r"], "<br>", $text);
         return compact('text', 'image');
