@@ -3,7 +3,7 @@
     <div class="card-body no-gutters">
         <div class="col mb-1">
             <div class="row no-gutters">
-                <img class="mr-2 rounded-circle" src="{$vo.user.avatar_url}" width="48" height="48" />
+                <img class="mr-2 rounded-circle" src="{$vo.user.avatar_url}" width="42" height="42" />
                 <div class="flex-grow-1">
                     <div class="font-weight-bold">{$vo.user.nickname}</div>
                     <div class="stamp">{:time_tran($vo.create_time)}</div>
@@ -33,21 +33,29 @@
             </div>
             {/if}
         </div>
-        <div class="handle row">
-            <a class="col" href="{:url('/post/info',['id'=>$vo.id])}" target="_blank"> <i class="la la-eye"></i>{$vo.view_num} </a>
-            <div class="col relay"><i class="la la-share"></i>{$vo.relay_num}</div>
-            <div class="col reply"><i class="la la-comment"></i>{$vo.reply_num}</div>
-            <div class="col like"><i class="la la-heart-o"></i>{$vo.like_num}</div>
-            <div class="col more">
-                <i class="la la-ellipsis-h"></i>
-            </div>
-            {if $vo.uid==$user.uid}
-            <!-- <div class="col">
-                删除
-            </div> -->
-            {/if}
+    </div>
+    <div class="handle row">
+        <a class="col" href="{:url('/post/info',['id'=>$vo.id])}" target="_blank"> <i class="la la-eye"></i>{$vo.view_num} </a>
+        <div class="col relay"><i class="la la-share"></i>{$vo.relay_num}</div>
+        <div class="col reply"><i class="la la-comment"></i>{$vo.reply_num}</div>
+        <div class="col like"><i class="la la-heart-o"></i>{$vo.like_num}</div>
+        <div class="col more">
+            <i class="la la-ellipsis-h"></i>
         </div>
+        {if $vo.uid==$user.uid}
+        <!-- <div class="col">
+            删除
+        </div> -->
+        {/if}
     </div>
 </div>
 {/foreach}
-{if $page * $length < $total} <div data-href="{:url('/post/data',['page'=>$page+1])}" class="load-list btn btn-primary btn-block w-75 my-3 mx-auto" data-dom="#feed_list">显示更多</div>{else}<div class="text-center my-3">没有了</div>{/if}
+{lt name="$page * $length" value="$total"}
+<div class="load-list" data-href="{:url('/post/data',['page'=>$page+1])}" data-dom="#feed_list">
+    <div class="btn btn-primary"><i class="la la-refresh"></i>显示更多</div>
+</div>
+{else/}
+<div class="load-list">
+    <div class="btn">没有了</div>
+</div>
+{/lt}

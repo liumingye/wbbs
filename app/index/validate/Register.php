@@ -8,6 +8,7 @@ use think\Validate;
 class Register extends Validate
 {
     protected $rule = [
+        '__token__' => ['token'],
         'name' => ['require', 'nameUnique', 'min' => 2, 'max' => 15, 'chsDash'],
         'mail' => ['require', 'mailUnique', 'email', 'max' => 64],
         'password' => ['require', 'min' => 6, 'max' => 20],
@@ -15,6 +16,7 @@ class Register extends Validate
         'captcha' => ['require', 'captcha'],
     ];
     protected $message = [
+        '__token__.token' => 'CSRF令牌验证失败',
         'name.require' => '必须填写用户名称',
         'name.nameUnique' => '用户名已经存在',
         'name.min' => '用户名至少包含2个字符',

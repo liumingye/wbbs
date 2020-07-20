@@ -68,9 +68,6 @@ class Post extends Base
             'create_time' => time(),
             'update_time' => time(),
         ];
-        if (empty($data['text']) && empty($data['image'])) {
-            return $this->error('内容不能为空');
-        }
         try {
             /** 初始化验证类 */
             $validate = validate(PostValidate::class);

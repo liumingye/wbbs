@@ -1,5 +1,6 @@
 <?php
 // 应用公共文件
+
 /**
  * 对字符串进行hash加密
  *
@@ -47,6 +48,7 @@ function hashValidate($from, $to)
         return md5($from) === $to;
     }
 }
+
 /**
  * 压缩 HTML 代码
  *
@@ -106,12 +108,13 @@ function time_tran($time)
     }
     return $str;
 }
+
 /**
  * 处理XSS跨站攻击的过滤函数
  */
 function removeXSS($val)
 {
-// remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
+    // remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
     // this prevents some character re-spacing such as <java\0script>
     // note that you have to handle splits with \n, \r, and \t later since they *are* allowed in some inputs
     $val = preg_replace('/([\x00-\x08]|[\x0b-\x0c]|[\x0e-\x19])/', '', $val);

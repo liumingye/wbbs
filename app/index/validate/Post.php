@@ -10,13 +10,14 @@ class Post extends Validate
 {
     protected $rule = [
         'uid' => ['require', 'isBan'],
-        'text' => ['max' => 255],
+        'text' => ['require', 'max' => 255],
         'image' => ['maxImage'],
     ];
     protected $message = [
         'uid.require' => '请先登录',
         'uid.isBan' => '您已被封禁',
-        'text.require' => '最多只能输入255个文字',
+        'text.require' => '发布内容不能为空',
+        'text.max' => '最多只能输入255个文字',
     ];
     /**
      * 验证上传图片个数

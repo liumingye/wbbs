@@ -14,7 +14,7 @@
         <div class="card-body no-gutters">
             <div class="col mb-1">
                 <div class="row no-gutters">
-                    <img class="mr-2 rounded-circle" src="{$info.user.avatar_url}" width="48" height="48">
+                    <img class="mr-2 rounded-circle" src="{$info.user.avatar_url}" width="42" height="42" />
                     <div class="flex-grow-1">
                         <div class="font-weight-bold">{$info.user.nickname}</div>
                         <div class="stamp">{:time_tran($info.create_time)}</div>
@@ -29,7 +29,7 @@
                 <div class="post-image-row">
                     {volist name="info.text_format.image" id="url"}
                     <div class="post-image-col">
-                        <img src="{$url}">
+                        <img src="{$url}" />
                     </div>
                     {/volist}
                 </div>
@@ -44,28 +44,20 @@
                 </div>
                 {/if}
             </div>
-            <div class="handle row">
-                <div class="col">
-                    <i class="la la-eye"></i>{$info.view_num}
-                </div>
-                <div class="col relay">
-                    <i class="la la-share"></i>{$info.relay_num}
-                </div>
-                <div class="col reply">
-                    <i class="la la-comment"></i>{$info.reply_num}
-                </div>
-                <div class="col like">
-                    <i class="la la-heart-o"></i>{$info.like_num}
-                </div>
-                <div class="col more">
-                    <i class="la la-ellipsis-h"></i>
-                </div>
-                {if $info.uid==$user.uid}
-                <!-- <div class="col">
-                    删除
-                </div> -->
-                {/if}
+        </div>
+        <div class="handle row">
+            <a class="col" href="{:url('/post/info',['id'=>$info.id])}" target="_blank"> <i class="la la-eye"></i>{$info.view_num} </a>
+            <div class="col relay"><i class="la la-share"></i>{$info.relay_num}</div>
+            <div class="col reply"><i class="la la-comment"></i>{$info.reply_num}</div>
+            <div class="col like"><i class="la la-heart-o"></i>{$info.like_num}</div>
+            <div class="col more">
+                <i class="la la-ellipsis-h"></i>
             </div>
+            {if $info.uid==$user.uid}
+            <!-- <div class="col">
+                删除
+            </div> -->
+            {/if}
         </div>
     </div>
 </div>

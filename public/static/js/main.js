@@ -226,14 +226,17 @@ $.cookie = function (key, value, options) {
         bindLoadList: function () {
             $(".load-list").click(function () {
                 var that = $(this);
-                var dom = $(that.data('dom'));
-                var text = that.text();
-                that.text('加载中...').css('pointer-events', 'none');
                 var href = that.data("href");
-                wbbs.htmlget(href, dom, function () {
+                if (!href) {
+                    return;
+                }
+                var btn = that.find('.btn');
+                var text = btn.html();
+                btn.text('加载中...').css('pointer-events', 'none');
+                wbbs.htmlget(href, $(that.data('dom')), function () {
                     that.remove();
                 }, function () {
-                    that.text(text).css('pointer-events', '');
+                    btn.html(text).css('pointer-events', '');
                 });
                 return false;
             });
@@ -278,7 +281,8 @@ $.cookie = function (key, value, options) {
         },
         loadReply: function (dom) {
             var that = $(dom);
-            that.text('加载中...');
+            var text = that.html();
+            that.text('加载中...').css('pointer-events', 'none');
             var url = that.data('href');
             var comment_children = that.parents('.comment-body').find('.comment-children');
             if (comment_children.length == 0) {
@@ -288,6 +292,8 @@ $.cookie = function (key, value, options) {
             wbbs.htmlget(url, comment_children, function () {
                 comment_children.show();
                 that.parent().remove();
+            }, function () {
+                that.html(text).css('pointer-events', '');
             });
         }
     };

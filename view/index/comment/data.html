@@ -1,31 +1,33 @@
+{if count($comments.list)}
 {foreach $comments.list as $vo}
 <div class="comment-body" id="comment-{$vo.id}">
     <div class="d-flex">
         <div class="d-flex flex-column">
             <div class="a-avatar d-flex flex-column">
-                <img src="{$vo.user.avatar_url}" width="43" height="43">
+                <img src="{$vo.user.avatar_url}">
                 <a href="javascript:void(0);" class="comment-reply" onclick="wbbs.reply('{$vo.id}')">回复</a>
             </div>
         </div>
         <div class="author d-flex flex-column">
-            <div class="flex-grow-1">
-                <div class="comment-author">
-                    <a href="#">{$vo.user.nickname}</a>
-                </div>
-                <div class="comment-time">{:time_tran($vo.create_time)}</div>
+            <div class="comment-author">
+                <a href="#">{$vo.user.nickname}</a>
             </div>
+            <div class="comment-time">{:time_tran($vo.create_time)}</div>
             <div class="comment-content">{$vo.text_format|raw}</div>
-            {if isset($vo.parent_count) && $vo.parent_count != 0}
+            {if isset($vo.reply) && $vo.reply != 0}
             <div class="comment-child">
-                <a href="javascript:void(0);" data-href="{:url('/comment/data',['pid'=>$vo.pid,'parent'=>$vo.id,'page'=>1])}" class="comment-child-a" onclick="wbbs.loadReply(this)">共{$vo.parent_count}条回复</a>
+                <a href="javascript:void(0);" data-href="{:url('/comment/data',['parent'=>$vo.id,'page'=>1])}" class="comment-child-a" onclick="wbbs.loadReply(this)">共{$vo.reply}条回复</a>
             </div>
             {/if}
         </div>
     </div>
 </div>
 {/foreach}
+{else}
+<div class="comment-without">还没有人评论，赶快抢个沙发</div>
+{/if}
 {if $comments.total > $comments.limit * $comments.page + $comments.start}
-<div class="comment-load load-list py-3" data-href="{:url('/comment/data',['pid'=>$comments.pid,'parent'=>$comments.parent,'page'=>$comments.page+1])}" data-dom="{if $comments.parent == 0}.comment-list{else}#comment-{$comments.parent} .comment-children{/if}">
-    <div class="btn btn-primary btn-block w-75 mx-auto">显示更多</div>
+<div class="load-list py-3" data-href="{:url('/comment/data',['pid'=>$comments.pid,'parent'=>$comments.parent,'page'=>$comments.page+1])}" data-dom="{if $comments.parent == 0}.comment-list{else}#comment-{$comments.parent} .comment-children{/if}">
+    <div class="btn btn-primary">显示更多</div>
 </div>
 {/if}

@@ -2,10 +2,12 @@
 
 namespace app\common\model;
 
-use think\facade\Db;
+use app\index\validate\Comment as CommentValidate;
+use think\exception\ValidateException;
 
 class Comment extends Base
 {
+    use \app\common\controller\Jump;
     /**
      * 模型事件 查询后
      */
@@ -25,35 +27,23 @@ class Comment extends Base
     /**
      * 列出评论数据
      */
-    public function listData($where, $page = 1, $parent = 0, $limit = 30, $start = 0, $order = "create_time DESC, id DESC", $field = '*')
+    public function listData($where, $page = 1, $parent = 0, $limit = 30, $start = 0, $order = "create_time DESC, id DESC", $field = '')
     {
         if ($parent == 0) {
+            if ($field != '') {
+                $field .= ",";
+            }
+            $field .= "id,pid,uid,text,reply,create_time";
             $total = $this->where($where)->where('parent', 0)->count();
             $list = $this->with('user')->withCache('user', 60)->field($field)->where($where)->where('parent', 0)->order($order)->limit(($limit * ($page - 1) + $start), $limit)->select();
-            /* 查询回复数量 */
-            if (!$list->isEmpty()) {
-                $sql = '';
-                $last = end($list)[0];
-                foreach ($list as $val) {
-                    if ($last != $val) {
-                        $sql .= " UNION ALL ";
-                    }
-                    $sql .= $this->where(['parent' => $val->id])->fetchSql(true)->count();
-
-                }
-                if ($sql != '') {
-                    $count = Db::query($sql);
-                    foreach ($list as $key => $val) {
-                        if (isset($count[$key]['think_count'])) {
-                            $list[$key]['parent_count'] = $count[$key]['think_count'];
-                        }
-                    }
-                }
-            }
         } else {
-            $total = $this->where($where)->where('parent', '<>', 0)->count();
+            if ($field != '') {
+                $field .= ",";
+            }
+            $field .= "id,uid,text,parent,create_time";
+            $total = $this->field('reply')->where('id', $parent)->find()['reply'];
             $list = $this->with('user')->withCache('user', 60)->field($field)->where($where)->where('parent', '<>', 0)->order($order)->limit(($limit * ($page - 1) + $start), $limit)->select();
-            $list = $this->getSubTree($list->toArray(), $parent);
+            $list = $this->getReplyTree($list->toArray(), $parent);
         }
         $pid = 0;
         if (isset($where['pid'])) {
@@ -63,11 +53,12 @@ class Comment extends Base
     }
 
     /**
-     * 一维数据数组生成数据树
+     * 构建回复评论数据树
      * @param array $data 数据列表
+     * @param int $parent 父评论id
      * @return Array
      */
-    public function getSubTree($data, $parent)
+    public function getReplyTree($data, $parent)
     {
         $items = [];
         foreach ($data as $v) {
@@ -88,5 +79,42 @@ class Comment extends Base
             }
         }
         return $tree;
+    }
+
+    /**
+     * 增加评论
+     */
+
+    public function saveData($data)
+    {
+        try {
+            $data['text'] = htmlspecialchars(removeXSS($data['text']));
+            $data['create_time'] = time();
+            $data['update_time'] = time();
+            /** 初始化验证类 */
+            $validate = validate(CommentValidate::class);
+            $validate->check($data);
+            // 一些变量
+            $id = $data['pid'];
+            $parent = $data['parent'];
+            // 增加评论
+            $res = $this->save($data);
+            if ($res) {
+                if ($parent != 0) {
+                    // 更新回复数
+                    $this->where('id', $parent)->inc('reply')->update();
+                }
+                // 更新评论数
+                $post = new Post;
+                $post->where('id', $id)->cache('post_info_' . $id)->inc('reply_num')->update();
+                return $this->success('评论成功');
+            } else {
+                return $this->error('评论失败');
+            }
+        } catch (ValidateException $e) {
+            /** 设置提示信息 */
+            return $this->error($e->getError());
+        }
+        return $this->error('评论失败');
     }
 }

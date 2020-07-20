@@ -4,8 +4,6 @@ namespace app\index\controller;
 
 use app\common\model\Comment as CommentModel;
 use think\facade\View;
-use think\exception\ValidateException;
-use app\index\validate\Comment as CommentValidate;
 
 class Comment extends Base
 {
@@ -13,10 +11,17 @@ class Comment extends Base
     /**
      * 列出评论
      */
-    public function data($pid, $page = 1, $parent = 0, $raw = false)
+    public function data($pid = 0, $page = 1, $parent = 0, $raw = false)
     {
+        if ($pid == 0 && $parent == 0) {
+            return $this->error('参数错误');
+        }
         $comment = new CommentModel;
-        $comments = $comment->listData(['pid' => $pid], $page, $parent);
+        if ($pid == 0) {
+            $comments = $comment->listData([], $page, $parent);
+        } else {
+            $comments = $comment->listData(['pid' => $pid], $page);
+        }
         if ($raw && !input('raw')) {
             return $comments;
         }
@@ -33,30 +38,13 @@ class Comment extends Base
         }
         $id = input('param.id', null, 'intval');
         $parent = input('post.parent', 0, 'intval');
-        $comment = new CommentModel;
         $data = [
             'pid' => $id,
             'uid' => $this->user->uid,
-            'text' => removeXSS(input('post.text', '', 'htmlspecialchars')),
+            'text' => input('post.text', ''),
             'parent' => $parent,
-            'create_time' => time(),
-            'update_time' => time(),
         ];
-        try {
-            /** 初始化验证类 */
-            $validate = validate(CommentValidate::class);
-            $validate->check($data);
-            $comment = new CommentModel;
-            $res = $comment->save($data);
-            if ($res) {
-                return $this->success('评论成功');
-            } else {
-                return $this->error('评论失败');
-            }
-        } catch (ValidateException $e) {
-            /** 设置提示信息 */
-            return $this->error($e->getError());
-        }
-        return $this->error('评论失败');
+        $comment = new CommentModel;
+        return $comment->saveData($data);
     }
 }
