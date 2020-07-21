@@ -48,16 +48,18 @@
         <div class="handle row">
             <a class="col" href="{:url('/post/info',['id'=>$info.id])}" target="_blank"> <i class="la la-eye"></i>{$info.view_num} </a>
             <div class="col relay"><i class="la la-share"></i>{$info.relay_num}</div>
-            <div class="col reply"><i class="la la-comment"></i>{$info.reply_num}</div>
+            <div class="col reply"><i class="la la-comment"></i>{$info.comment_num}</div>
             <div class="col like"><i class="la la-heart-o"></i>{$info.like_num}</div>
-            <div class="col more">
-                <i class="la la-ellipsis-h"></i>
+            <div class="col more dropdown">
+                <a class="dropdown-toggle" href="#" id="post-handle-more" data-toggle="dropdown"><i class="la la-ellipsis-h"></i></a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-handle-more">
+                    {if $info.uid==$user.uid}
+                    <button class="dropdown-item">删除</button>
+                    {else}
+                    <button class="dropdown-item">关注</button>
+                    {/if}
+                </div>
             </div>
-            {if $info.uid==$user.uid}
-            <!-- <div class="col">
-                删除
-            </div> -->
-            {/if}
         </div>
     </div>
 </div>

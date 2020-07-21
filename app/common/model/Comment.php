@@ -29,25 +29,48 @@ class Comment extends Base
      */
     public function listData($where, $page = 1, $parent = 0, $limit = 30, $start = 0, $order = "create_time DESC, id DESC", $field = '')
     {
+        $pid = 0;
+        if (isset($where['pid'])) {
+            $pid = $where['pid'];
+        }
         if ($parent == 0) {
             if ($field != '') {
                 $field .= ",";
             }
-            $field .= "id,pid,uid,text,reply,create_time";
-            $total = $this->where($where)->where('parent', 0)->count();
-            $list = $this->with('user')->withCache('user', 60)->field($field)->where($where)->where('parent', 0)->order($order)->limit(($limit * ($page - 1) + $start), $limit)->select();
+            $post = new Post;
+            $post_cache = $post->where('id', $pid)->cache('post_' . $pid)->find();
+            if ($post_cache) {
+                $total = $post_cache->comment_num;
+            } else {
+                $total = $post->where('id', $pid)->value('comment_num');
+            }
+            $field .= "id,uid,text,reply,create_time";
+            $list = $this
+                ->with('user')
+                ->withCache('user', 60)
+                ->field($field)
+                ->where($where)
+                ->where('parent', 0)
+                ->order($order)
+                ->limit(($limit * ($page - 1) + $start), $limit)
+                ->select();
         } else {
             if ($field != '') {
                 $field .= ",";
             }
+            $post = new Post;
+            $total = $post->where('id', $pid)->value('reply_num');
             $field .= "id,uid,text,parent,create_time";
-            $total = $this->field('reply')->where('id', $parent)->find()['reply'];
-            $list = $this->with('user')->withCache('user', 60)->field($field)->where($where)->where('parent', '<>', 0)->order($order)->limit(($limit * ($page - 1) + $start), $limit)->select();
+            $list = $this
+                ->with('user')
+                ->withCache('user', 60)
+                ->field($field)
+                ->where($where)
+                ->where('parent', '<>', 0)
+                ->order($order)
+                ->limit(($limit * ($page - 1) + $start), $limit)
+                ->select();
             $list = $this->getReplyTree($list->toArray(), $parent);
-        }
-        $pid = 0;
-        if (isset($where['pid'])) {
-            $pid = $where['pid'];
         }
         return compact('list', 'total', 'page', 'limit', 'start', 'pid', 'parent');
     }
@@ -103,10 +126,13 @@ class Comment extends Base
                 if ($parent != 0) {
                     // 更新回复数
                     $this->where('id', $parent)->inc('reply')->update();
+                    $post = new Post;
+                    $post->where('id', $id)->cache('post_' . $id)->inc('reply_num')->update();
+                } else {
+                    // 更新评论数
+                    $post = new Post;
+                    $post->where('id', $id)->cache('post_' . $id)->inc('comment_num')->update();
                 }
-                // 更新评论数
-                $post = new Post;
-                $post->where('id', $id)->cache('post_info_' . $id)->inc('reply_num')->update();
                 return $this->success('评论成功');
             } else {
                 return $this->error('评论失败');

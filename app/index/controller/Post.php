@@ -2,9 +2,9 @@
 
 namespace app\index\controller;
 
+use app\common\model\Comment as CommentModel;
 use app\common\model\Post as PostModel;
 use app\common\model\Relationships;
-use app\index\controller\Comment;
 use app\index\validate\Post as PostValidate;
 use think\exception\ValidateException;
 use think\facade\View;
@@ -19,12 +19,12 @@ class Post extends Base
     {
         $id = input('param.id', null, 'intval');
         $post = new PostModel;
-        $info = $post->with('user')->withCache(60)->cache('post_info_' . $id)->where('id', $id)->find();
+        $info = $post->with('user')->withCache(60)->cache('post_' . $id)->where('id', $id)->find();
         if (empty($info)) {
             return $this->error('未找到此文章');
         }
-        $comment = new Comment;
-        $comments = $comment->data($id, 1, 0, true);
+        $comment = new CommentModel;
+        $comments = $comment->listData(['pid' => $id], 1);
         View::assign(compact('info', 'comments'));
         return $this->label_fetch();
     }

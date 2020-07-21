@@ -11,8 +11,14 @@ class Comment extends Base
     /**
      * 列出评论
      */
-    public function data($pid = 0, $page = 1, $parent = 0, $raw = false)
+    public function data()
     {
+        if (!request()->isPost()) {
+            return $this->error('请求错误');
+        }
+        $pid = input('param.pid', 0, 'intval');
+        $parent = input('param.parent', 0, 'intval');
+        $page = input('param.page', 1, 'intval');
         if ($pid == 0 && $parent == 0) {
             return $this->error('参数错误');
         }
@@ -22,9 +28,6 @@ class Comment extends Base
         } else {
             $comments = $comment->listData(['pid' => $pid], $page);
         }
-        if ($raw && !input('raw')) {
-            return $comments;
-        }
         View::assign(compact('comments'));
         return $this->result($this->label_fetch(), 1, '', 'json');
     }
@@ -33,15 +36,18 @@ class Comment extends Base
      */
     public function add()
     {
+        if (!request()->isPost()) {
+            return $this->error('请求错误');
+        }
         if (!$this->user) {
             return $this->error('请先登录');
         }
         $id = input('param.id', null, 'intval');
-        $parent = input('post.parent', 0, 'intval');
+        $parent = input('param.parent', 0, 'intval');
         $data = [
             'pid' => $id,
             'uid' => $this->user->uid,
-            'text' => input('post.text', ''),
+            'text' => input('param.text', ''),
             'parent' => $parent,
         ];
         $comment = new CommentModel;
