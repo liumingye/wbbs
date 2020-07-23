@@ -5,7 +5,7 @@
 
 {/block}
 {block name="body"}
-<form class="col" action="{:url('/auth/register')}" method="POST">
+<form class="col py-3" action="{:url('/auth/register')}" method="POST">
     {:token_field()}
     {present name="error"}
     <div class="alert alert-danger" role="alert">

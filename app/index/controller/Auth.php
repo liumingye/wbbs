@@ -42,11 +42,7 @@ class Auth extends Base
                     View::assign(compact('error'));
                 } else {
                     /** 跳转验证后地址 */
-                    if (isset($_SERVER['HTTP_REFERER']) && null != $_SERVER['HTTP_REFERER']) {
-                        return $this->success('登录成功', $_SERVER['HTTP_REFERER']);
-                    } else {
-                        return $this->success('登录成功', url('/'));
-                    }
+                    return $this->success('登录成功');
                 }
             } catch (ValidateException $e) {
                 /** 设置提示信息 */

@@ -42,7 +42,7 @@ class Comment extends Base
             if ($post_cache) {
                 $total = $post_cache->comment_num;
             } else {
-                $total = $post->where('id', $pid)->value('comment_num');
+                $total = $post->where('id', $pid)->cache('post_' . $pid)->value('comment_num');
             }
             $field .= "id,uid,text,reply,create_time";
             $list = $this
@@ -59,7 +59,7 @@ class Comment extends Base
                 $field .= ",";
             }
             $post = new Post;
-            $total = $post->where('id', $pid)->value('reply_num');
+            $total = $post->where('id', $pid)->cache('post_' . $pid)->value('reply_num');
             $field .= "id,uid,text,parent,create_time";
             $list = $this
                 ->with('user')
@@ -107,11 +107,10 @@ class Comment extends Base
     /**
      * 增加评论
      */
-
     public function saveData($data)
     {
         try {
-            $data['text'] = htmlspecialchars(removeXSS($data['text']));
+            $data['text'] = htmlspecialchars(removeXSS(trim($data['text'])));
             $data['create_time'] = time();
             $data['update_time'] = time();
             /** 初始化验证类 */

@@ -14,9 +14,8 @@ class Post extends Base
     {
         $post->setAttr('text_format', self::parse($post->text));
     }
-    public function listData($where, $order = "id desc", $page = 1, $limit = 10, $start = 0, $field = '*')
+    public function listData($where, $order = "create_time desc", $page = 1, $limit = 10, $start = 0, $field = '*')
     {
-
     }
 
     /**
@@ -40,6 +39,8 @@ class Post extends Base
      */
     public function handle($content, $image)
     {
+        $content = htmlspecialchars(removeXSS(trim($content)));
+        $image = htmlspecialchars(removeXSS(trim($image)));
         /* 话题处理 */
         if (strpos($content, '#') !== false) {
             if (preg_match_all('~\#([^\#]+?)\#~', $content, $match)) {

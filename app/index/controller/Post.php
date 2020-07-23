@@ -19,7 +19,11 @@ class Post extends Base
     {
         $id = input('param.id', null, 'intval');
         $post = new PostModel;
-        $info = $post->with('user')->withCache(60)->cache('post_' . $id)->where('id', $id)->find();
+        $info = $post
+            ->with('user')
+            ->withCache(60)
+            ->cache('post_' . $id)
+            ->where('id', $id)->find();
         if (empty($info)) {
             return $this->error('未找到此文章');
         }
@@ -61,8 +65,8 @@ class Post extends Base
         }
         $data = [
             'uid' => $this->user->uid,
-            'text' => removeXSS(input('post.text', '', 'htmlspecialchars')),
-            'image' => removeXSS(input('post.image', '', 'htmlspecialchars')),
+            'text' => input('post.text', ''),
+            'image' => input('post.image', ''),
             'type' => '',
             'status' => 1,
             'create_time' => time(),
