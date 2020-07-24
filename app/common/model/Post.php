@@ -3,6 +3,8 @@
 namespace app\common\model;
 
 use app\common\util\HyperDown;
+use app\index\validate\Post as PostValidate;
+use think\exception\ValidateException;
 use think\facade\Filesystem;
 
 class Post extends Base
@@ -13,9 +15,6 @@ class Post extends Base
     public static function onAfterRead($post)
     {
         $post->setAttr('text_format', self::parse($post->text));
-    }
-    public function listData($where, $order = "create_time desc", $page = 1, $limit = 10, $start = 0, $field = '*')
-    {
     }
 
     /**
@@ -32,6 +31,59 @@ class Post extends Base
     public function comment()
     {
         return $this->hasMany('Comment', 'pid');
+    }
+
+    /**
+     * 列出文章
+     */
+    public function listData($where, $page = 1, $length = 10, $start = 0, $order = "create_time DESC, id DESC", $field = '*')
+    {
+        if ($page < 1) {
+            $page = 1;
+        }
+        $start = ($page - 1) * $length;
+        $total = $this->where($where)->count();
+        $list = $this->with('user')->withCache(60)->where($where)->limit($start, $length)->order($order)->select();
+        $data = compact('list', 'page', 'length', 'total');
+        return $data;
+    }
+
+    /**
+     * 增加文章
+     */
+    public function saveData($data)
+    {
+        try {
+            /** 初始化验证类 */
+            $validate = validate(PostValidate::class);
+            $validate->check($data);
+            $data['text'] = $this->handle($data['text'], $data['image']);
+            $res = $this->save($data);
+            if ($res) {
+                // 文章 关联 话题
+                if (!empty($topicid)) {
+                    $relationships = new Relationships;
+                    $data = [];
+                    foreach ($topicid as $tid) {
+                        $data[] = [
+                            'pid' => $this->id,
+                            'tid' => $tid,
+                        ];
+                    }
+                    $relationships->saveAll($data);
+                }
+                $code = 1;
+                $msg = "发布成功";
+            } else {
+                $code = 0;
+                $msg = "发布失败";
+            }
+        } catch (ValidateException $e) {
+            /** 设置提示信息 */
+            $code = 0;
+            $msg = $e->getError();
+        }
+        return ['code' => $code, 'msg' => $msg];
     }
 
     /**
@@ -106,7 +158,6 @@ class Post extends Base
      */
     public static function parse($text)
     {
-        // $text = htmlspecialchars(htmlspecialchars_decode($text));
         $text = preg_replace_callback('/\[T\](.*?)\[\/T\]/i', function ($match) {
             return '<a href="' . url('/search', ['q' => "#$match[1]#"]) . '" target="_blank">#' . $match[1] . '#</a>';
         }, $text);

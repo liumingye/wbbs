@@ -4,9 +4,6 @@ namespace app\index\controller;
 
 use app\common\model\Comment as CommentModel;
 use app\common\model\Post as PostModel;
-use app\common\model\Relationships;
-use app\index\validate\Post as PostValidate;
-use think\exception\ValidateException;
 use think\facade\View;
 
 class Post extends Base
@@ -32,26 +29,19 @@ class Post extends Base
         View::assign(compact('info', 'comments'));
         return $this->label_fetch();
     }
+
     /**
      * 列出内容
      */
-    public function data($page, $raw = false)
+    public function data($page)
     {
-        if ($page < 1) {
-            $page = 1;
-        }
-        $length = 10;
-        $start = ($page - 1) * $length;
+        $page = input('param.page', 1, 'intval');
         $post = new PostModel;
-        $total = $post->count();
-        $list = $post->with('user')->withCache(60)->limit($start, $length)->order('create_time desc')->select();
-        $data = compact('list', 'page', 'length', 'total');
-        if ($raw && !input('raw')) {
-            return $data;
-        }
+        $data = $post->listData([], $page);
         View::assign($data);
         return $this->result($this->label_fetch(), 1, '', 'json');
     }
+
     /**
      * 发布内容
      */
@@ -72,35 +62,20 @@ class Post extends Base
             'create_time' => time(),
             'update_time' => time(),
         ];
-        try {
-            /** 初始化验证类 */
-            $validate = validate(PostValidate::class);
-            $validate->check($data);
-            $post = new PostModel;
-            $data['text'] = $post->handle($data['text'], $data['image']);
-            /** 发布 */
-            $res = $post->save($data);
-            if ($res) {
-                // 文章 关联 话题
-                if (!empty($topicid)) {
-                    $relationships = new Relationships;
-                    $data = [];
-                    foreach ($topicid as $tid) {
-                        $data[] = [
-                            'pid' => $post->id,
-                            'tid' => $tid,
-                        ];
-                    }
-                    $relationships->saveAll($data);
-                }
-                return $this->success('发布成功');
-            } else {
-                return $this->error('发布失败');
-            }
-        } catch (ValidateException $e) {
-            /** 设置提示信息 */
-            return $this->error($e->getError());
+        $post = new PostModel;
+        $res = $post->saveData($data);
+        if ($res['code'] == 1) {
+            return $this->success($res['msg']);
+        } else {
+            return $this->error($res['msg']);
         }
-        return $this->error('发布失败');
+    }
+
+    /**
+     * 点赞功能
+     */
+    public function upvote()
+    {
+
     }
 }

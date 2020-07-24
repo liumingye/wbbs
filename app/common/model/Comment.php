@@ -59,7 +59,13 @@ class Comment extends Base
                 $field .= ",";
             }
             $post = new Post;
-            $total = $post->where('id', $pid)->cache('post_' . $pid)->value('reply_num');
+
+            $post_cache = $post->where('id', $pid)->cache('post_' . $pid)->find();
+            if ($post_cache) {
+                $total = $post_cache->reply_num;
+            } else {
+                $total = $post->where('id', $pid)->cache('post_' . $pid)->value('reply_num');
+            }
             $field .= "id,uid,text,parent,create_time";
             $list = $this
                 ->with('user')
