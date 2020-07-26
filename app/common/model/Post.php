@@ -14,7 +14,7 @@ class Post extends Base
      */
     public static function onAfterRead($post)
     {
-        $post->setAttr('text_format', self::parse($post->text));
+        $post->setAttr('format', self::parse($post->text));
     }
 
     /**
@@ -57,7 +57,9 @@ class Post extends Base
             /** 初始化验证类 */
             $validate = validate(PostValidate::class);
             $validate->check($data);
-            $data['text'] = $this->handle($data['text'], $data['image']);
+            $text = htmlspecialchars(removeXSS(trim($data['text'])));
+            $image = htmlspecialchars(removeXSS(trim($data['image'])));
+            $data['text'] = $this->handle($text, $image);
             $res = $this->save($data);
             if ($res) {
                 // 文章 关联 话题
@@ -72,30 +74,42 @@ class Post extends Base
                     }
                     $relationships->saveAll($data);
                 }
-                $code = 1;
-                $msg = "发布成功";
-            } else {
-                $code = 0;
-                $msg = "发布失败";
+                // 增加发帖数
+                $uid = $data['uid'];
+                User::find($uid)->inc('post_num')->cache('user_' . $uid)->update();
+                return ['code' => 1, 'msg' => '发布成功'];
             }
         } catch (ValidateException $e) {
-            /** 设置提示信息 */
-            $code = 0;
-            $msg = $e->getError();
+            return ['code' => 0, 'msg' => $e->getError()];
         }
-        return ['code' => $code, 'msg' => $msg];
+        return ['code' => 0, 'msg' => '发布失败'];
+    }
+
+    /**
+     * 删除文章
+     */
+    public function delData($data)
+    {
+        $id = $data['id'];
+        $uid = $data['uid'];
+        $res = $this->where(['id' => $id, 'uid' => $uid])->cache('post_' . $id)->delete();
+        if ($res) {
+            // 删除评论
+            $comment = new Comment;
+            $comment->where('pid', $id)->delete();
+            return ['code' => 1, 'msg' => '删除成功'];
+        }
+        return ['code' => 0, 'msg' => '删除失败'];
     }
 
     /**
      * 内容处理
      */
-    public function handle($content, $image)
+    public function handle($text, $image)
     {
-        $content = htmlspecialchars(removeXSS(trim($content)));
-        $image = htmlspecialchars(removeXSS(trim($image)));
         /* 话题处理 */
-        if (strpos($content, '#') !== false) {
-            if (preg_match_all('~\#([^\#]+?)\#~', $content, $match)) {
+        if (strpos($text, '#') !== false) {
+            if (preg_match_all('~\#([^\#]+?)\#~', $text, $match)) {
                 foreach ($match[1] as $v) {
                     $v = str_replace(array('(', ')'), '', trim($v));
                     $tags[$v] = $v;
@@ -133,7 +147,7 @@ class Post extends Base
                     }
                     $cont_sch = array_merge($cont_sch);
                     $cont_rpl2 = array_merge($cont_rpl2);
-                    $content = str_replace($cont_sch, $cont_rpl2, $content);
+                    $text = str_replace($cont_sch, $cont_rpl2, $text);
                 }
             }
         }
@@ -145,12 +159,12 @@ class Post extends Base
                 foreach ($date_image as $img) {
                     list($type, $id) = explode(":", $img);
                     if (isset($type) && in_array($type, config('wbbs.upload.way')) && isset($id)) {
-                        $content .= "[F]{$type}:{$id}[/F]";
+                        $text .= "[F]{$type}:{$id}[/F]";
                     }
                 }
             }
         }
-        return $content;
+        return $text;
     }
 
     /**

@@ -5,7 +5,7 @@
         <div class="d-flex flex-column">
             <div class="a-avatar d-flex flex-column">
                 <img src="{$vo.user.avatar_url}">
-                <a href="javascript:void(0);" class="comment-reply" onclick="wbbs.reply('{$vo.id}')">回复</a>
+                <a href="javascript:void(0);" class="comment-reply" onclick="reply.add('{$vo.id}')">回复</a>
             </div>
         </div>
         <div class="author d-flex flex-column">
@@ -13,10 +13,10 @@
                 <a href="#">{$vo.user.nickname}</a>
             </div>
             <div class="comment-time">{:time_tran($vo.create_time)}</div>
-            <div class="comment-content">{$vo.text_format|raw}</div>
+            <div class="comment-content">{$vo.format|raw}</div>
             {if isset($vo.reply) && $vo.reply != 0}
             <div class="comment-child">
-                <a href="javascript:void(0);" data-href="{:url('/comment/data',['parent'=>$vo.id,'page'=>1])}" class="comment-child-a" onclick="wbbs.loadReply(this)">共{$vo.reply}条回复</a>
+                <a href="javascript:void(0);" data-href="{:url('/comment/data',['pid'=>$comments.pid,'parent'=>$vo.id,'page'=>1])}" class="comment-child-a" onclick="reply.load(this)">共{$vo.reply}条回复</a>
             </div>
             {/if}
         </div>

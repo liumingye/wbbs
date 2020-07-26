@@ -14,7 +14,10 @@ class Post extends Base
      */
     public function info()
     {
-        $id = input('param.id', null, 'intval');
+        $id = input('param.id', 0);
+        if ($id <= 0) {
+            return $this->error('未找到此文章');
+        }
         $post = new PostModel;
         $info = $post
             ->with('user')
@@ -35,7 +38,7 @@ class Post extends Base
      */
     public function data($page)
     {
-        $page = input('param.page', 1, 'intval');
+        $page = input('param.page', 1);
         $post = new PostModel;
         $data = $post->listData([], $page);
         View::assign($data);
@@ -64,6 +67,30 @@ class Post extends Base
         ];
         $post = new PostModel;
         $res = $post->saveData($data);
+        if ($res['code'] == 1) {
+            return $this->success($res['msg']);
+        } else {
+            return $this->error($res['msg']);
+        }
+    }
+
+    /**
+     * 删除文章
+     */
+    public function del()
+    {
+        if (!request()->isPost()) {
+            return $this->error('请求错误');
+        }
+        if (!$this->user) {
+            return $this->error('请先登录');
+        }
+        $data = [
+            'id' => input('id', 0),
+            'uid' => $this->user->uid
+        ];
+        $post = new PostModel;
+        $res = $post->delData($data);
         if ($res['code'] == 1) {
             return $this->success($res['msg']);
         } else {

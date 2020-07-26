@@ -8,11 +8,12 @@ use think\facade\View;
 class Search extends Base
 {
     use \app\common\controller\Jump;
-    public function index($q)
+    public function index()
     {
-        $page = input('param.page', 1, 'intval');
+        $wd = input('param.wd', null);
+        $page = input('param.page', 1);
         $post = new PostModel;
-        $data = $post->listData([['text', 'like', "%$q%"]], $page);
+        $data = $post->listData([['text', 'like', "%$wd%"]], $page);
         View::assign($data);
         return $this->label_fetch();
     }

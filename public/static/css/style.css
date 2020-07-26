@@ -5,7 +5,7 @@ html {
 a:hover {
   text-decoration: none;
 }
-.main header {
+header {
   -webkit-align-items: stretch;
   -webkit-flex-direction: column;
   -ms-flex-align: stretch;
@@ -18,6 +18,9 @@ a:hover {
 .main main {
   padding: 0;
   margin: 0 !important;
+}
+footer {
+  margin-top: 10px;
 }
 .toptip {
   display: -ms-flexbox;
@@ -225,7 +228,11 @@ a:hover {
   display: none;
 }
 /* 右侧栏 */
-.aside .card {
+.aside {
+  margin: 10px 0;
+}
+.widget {
+  margin-top: 10px;
   background-color: #f5f8fa;
   border: none;
 }
@@ -247,7 +254,31 @@ a:hover {
   left: 50%;
   margin-left: -30px;
 }
-
+/* 搜索 */
+#search {
+  background-color: #e6ecf0;
+  border: 1px solid #e6ecf0;
+  border-radius: 25px;
+}
+#search button {
+  margin: 0 10px 0 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #324b64;
+  outline: none;
+}
+#search input {
+  display: block;
+  border: none;
+  background: none;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  padding: 10px 5px;
+  color: #324b64;
+  width: 100%;
+  outline: none;
+}
 /* 发布框 */
 .feed .card {
   border: none;
@@ -429,6 +460,9 @@ a.artZoom span.loading {
   padding: 10px 10px 0;
   border-bottom: 1px solid #e6ecf0;
 }
+.comment-body:last-child > .d-flex {
+  border-bottom: none;
+}
 .comment-body:hover {
   background-color: #f5f8fa;
 }
@@ -587,6 +621,9 @@ a.artZoom span.loading {
 
 /* lg */
 @media (min-width: 992px) {
+  .container-lg {
+    max-width: 100%;
+  }
   .nav-list .nav-link div {
     display: inline-block;
     width: auto;

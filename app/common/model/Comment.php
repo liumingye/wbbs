@@ -13,7 +13,7 @@ class Comment extends Base
      */
     public static function onAfterRead($comment)
     {
-        $comment->setAttr('text_format', str_replace(["\r\n", "\n", "\r"], "<br>", $comment->text));
+        $comment->setAttr('format', str_replace(["\r\n", "\n", "\r"], "<br>", $comment->text));
     }
 
     /**
@@ -59,7 +59,6 @@ class Comment extends Base
                 $field .= ",";
             }
             $post = new Post;
-
             $post_cache = $post->where('id', $pid)->cache('post_' . $pid)->find();
             if ($post_cache) {
                 $total = $post_cache->reply_num;
@@ -97,7 +96,7 @@ class Comment extends Base
         $tree = [];
         foreach ($items as $k => $item) {
             if (isset($items[$item['parent']])) {
-                $item['text_format'] = '回复@' . $items[$item['parent']]['user']['nickname'] . ":" . $items[$k]['text_format'];
+                $item['format'] = '回复@' . $items[$item['parent']]['user']['nickname'] . ":" . $items[$k]['format'];
                 $tree[] = $item;
             } else {
                 if ($item['parent'] == $parent) {
@@ -138,14 +137,11 @@ class Comment extends Base
                     $post = new Post;
                     $post->where('id', $id)->cache('post_' . $id)->inc('comment_num')->update();
                 }
-                return $this->success('评论成功');
-            } else {
-                return $this->error('评论失败');
+                return ['code' => 1, 'msg' => '评论成功'];
             }
         } catch (ValidateException $e) {
-            /** 设置提示信息 */
-            return $this->error($e->getError());
+            return ['code' => 0, 'msg' => $e->getError()];
         }
-        return $this->error('评论失败');
+        return ['code' => 0, 'msg' => '评论失败'];
     }
 }

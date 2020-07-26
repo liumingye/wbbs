@@ -89,10 +89,10 @@ class User extends Base
         if (null !== $this->_hasLogin) {
             return $this->_hasLogin;
         } else {
-            $cookieUid = cookie('wbbs_uid');
+            $cookieUid = intval(cookie('wbbs_uid'));
             if (null !== $cookieUid) {
                 /** 验证登陆 */
-                $user = $this->cache(true)->find($cookieUid);
+                $user = $this->cache('user_' . $cookieUid)->find($cookieUid);
                 $token = cookie('wbbs_token');
                 if ($user && hashValidate($user['token'], $token)) {
                     $this->_user = $user;

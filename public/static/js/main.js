@@ -167,7 +167,7 @@ $.cookie = function (key, value, options) {
 };
 /* 功能函数 */
 (function () {
-    var wbbs = {
+    window.wbbs = {
         /* 文章图片 */
         picctrl: function () {
             $('.post-image-col:not(".init")').addClass('init').click(function () {
@@ -250,8 +250,51 @@ $.cookie = function (key, value, options) {
             a.attr("href", url);
             a[0].click();
         },
-        /* 评论回复 */
-        reply: function (coid) {
+        postDel: function (id) {
+            swal({
+                icon: "info",
+                title: "确认要删除这条推文吗？",
+                dangerMode: true,
+                buttons: {
+                    cancel: {
+                        text: "取消",
+                        value: null,
+                        visible: true
+                    },
+                    confirm: {
+                        dangerMode: true,
+                        text: "确认",
+                        value: true,
+                    }
+                }
+            }).then(function (value) {
+                if (value) {
+                    $.ajax({
+                        url: siteroot + "post/del",
+                        data: { id: id },
+                        type: "POST",
+                        success: function (data) {
+                            swal({
+                                icon: data.code == 1 ? "success" : "error",
+                                title: data.msg
+                            });
+                            if (data.code == 1) {
+                                var dom = $('.post_' + id);
+                                if (dom.length) {
+                                    $('.post_' + id).remove();
+                                } else {
+                                    location.href = siteroot;
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        },
+    };
+    /* 评论 */
+    window.reply = {
+        add: function (coid) {
             var response = $(".comment-respond"),
                 input = $("#comment-parent"),
                 form = response.find("form"),
@@ -271,7 +314,7 @@ $.cookie = function (key, value, options) {
             $('.comment-title').text('向 ' + $("#comment-" + coid).find('.comment-author').eq(0).text() + ' 进行回复');
             return false;
         },
-        cancelReply: function () {
+        cancel: function () {
             var response = $(".comment-respond");
             $("#cancel-comment-reply-link").hide();
             response.insertBefore("#comment-form-place-holder");
@@ -279,7 +322,7 @@ $.cookie = function (key, value, options) {
             response.find("textarea").val('');
             return false;
         },
-        loadReply: function (dom) {
+        load: function (dom) {
             var that = $(dom);
             var text = that.html();
             that.text('加载中...').css('pointer-events', 'none');
@@ -295,11 +338,83 @@ $.cookie = function (key, value, options) {
             }, function () {
                 that.html(text).css('pointer-events', '');
             });
-        }
+        },
     };
-    window.wbbs = wbbs;
 })();
-
 $('#mobile-nav').click(function () {
     $('.nav-list').toggleClass('nav-show');
+});
+$(document).on('click', '.ajax-link', function () {
+    var that = $(this),
+        href = that.attr('href'),
+        confirm = that.hasClass('confirm') ? true : false;
+    var ajax = function () {
+        that.text('...').css("pointer-events", "none");
+        $.ajax({
+            url: href,
+            type: "POST",
+            success: function (data) {
+
+            }
+        });
+    }
+    if (confirm) {
+        swal({
+            icon: that.data("icon") ? that.data("icon") : "info",
+            title: that.data("title") ? that.data("title") : "确定此操作?",
+            buttons: {
+                cancel: {
+                    text: "取消",
+                    value: null,
+                    visible: true
+                },
+                confirm: {
+                    text: "确认",
+                    value: true,
+                    visible: true
+                }
+            }
+        }).then(function (value) {
+            if (value) {
+                alert('a');
+            }
+        });
+    } else {
+        ajax();
+    }
+    return false;
+});
+/* 发送推文 */
+$('.send_post').submit(function () {
+    var form_data = $(this).serialize();
+    var image = [];
+    for (var i = 0; i < dropzone.files.length; i++) {
+        if (dropzone.files[i].status == "success") {
+            var json = JSON.parse(dropzone.files[i].xhr.response);
+            if (json.data.id) {
+                image.push(json.data.id);
+            }
+        }
+    }
+    if (image.length != 0) {
+        form_data += "&image=" + image.join('|');
+    }
+    $.ajax({
+        url: siteroot + '/post/add',
+        type: 'POST',
+        data: form_data,
+        success: function (res) {
+            if (res.code == 1) {
+                location.href = location.href;
+            } else {
+                alert(res.msg);
+            }
+        }
+    });
+    return false;
+});
+/* 搜索 */
+$('#search').submit(function () {
+    location.href = siteroot + 's/' + $(this).find('input').val();
+    return false;
 });

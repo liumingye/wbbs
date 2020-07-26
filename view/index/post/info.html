@@ -1,5 +1,5 @@
 {extend name="public/base"}
-{block name="title"}{$config['title']} - {$config['description']}{/block}
+{block name="title"}{:mb_strimwidth(strip_tags($info.format.text),0,44,'...')} 来自{$info.user.nickname} - {$config['title']}{/block}
 {block name="toptip"}主页{/block}
 {block name="head"}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.7.1/dist/dropzone.min.css">
@@ -22,12 +22,12 @@
                 </div>
             </div>
             <div class="col">
-                {if !empty($info.text_format.text)}
-                <div class="card-text">{$info.text_format.text|raw}</div>
+                {if !empty($info.format.text)}
+                <div class="card-text">{$info.format.text|raw}</div>
                 {/if}
-                {if !empty($info.text_format.image)}
+                {if !empty($info.format.image)}
                 <div class="post-image-row">
-                    {volist name="info.text_format.image" id="url"}
+                    {volist name="info.format.image" id="url"}
                     <div class="post-image-col">
                         <img src="{$url}" />
                     </div>
@@ -53,7 +53,7 @@
                 <a class="dropdown-toggle" href="#" id="post-handle-more" data-toggle="dropdown"><i class="la la-ellipsis-h"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-handle-more">
                     {if $info.uid==$user.uid}
-                    <button class="dropdown-item">删除</button>
+                    <button class="dropdown-item" onclick="wbbs.postDel('{$info.id}');">删除</button>
                     {else}
                     <button class="dropdown-item">关注</button>
                     {/if}
@@ -74,8 +74,8 @@
                     图片
                     同时转发到我的微博
                 </div>
+                <button type="button" class="mr-2 btn btn-primary" id="cancel-comment-reply-link" onclick="reply.cancel()">取消</button>
                 <button type="submit" class="btn btn-primary">评论</button>
-                <button type="button" class="ml-2 btn btn-primary" id="cancel-comment-reply-link" onclick="wbbs.cancelReply()">取消</button>
             </div>
         </form>
     </div>

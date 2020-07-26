@@ -67,33 +67,5 @@
     }
     /* 使用 */
     $('.input_post').autoHeight();
-    $('.send_post').submit(function () {
-        var form_data = $(this).serialize();
-        var image = [];
-        for (var i = 0; i < dropzone.files.length; i++) {
-            if (dropzone.files[i].status == "success") {
-                var json = JSON.parse(dropzone.files[i].xhr.response);
-                if (json.data.id) {
-                    image.push(json.data.id);
-                }
-            }
-        }
-        if (image.length != 0) {
-            form_data += "&image=" + image.join('|');
-        }
-        $.ajax({
-            url: '{:url("/post/add")}',
-            type: 'POST',
-            data: form_data,
-            success: function (res) {
-                if (res.code == 1) {
-                    location.href = location.href;
-                } else {
-                    alert(res.msg);
-                }
-            }
-        });
-        return false;
-    });
 </script>
 {/block}
