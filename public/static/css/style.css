@@ -18,6 +18,7 @@ header {
 .main main {
   padding: 0;
   margin: 0 !important;
+  align-items: flex-start;
 }
 footer {
   margin-top: 10px;
@@ -131,18 +132,17 @@ footer {
 #post-handle-more::after {
   display: none;
 }
-.load-list {
-  border-bottom: 1px solid #e6ecf0;
+.load-row {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-pack: center;
   justify-content: center;
   padding: 1rem 0;
 }
-.load-list i {
+.load-row .btn i {
   margin-right: 0.25rem;
 }
-.load-list .btn {
+.load-row .btn {
   border-radius: 25px;
   font-size: 12px;
   padding: 5px 15px;
@@ -338,7 +338,7 @@ footer {
 }
 
 /* 推文内容 */
-.post:hover {
+#feed_list .card:hover {
   background-color: #f5f8fa;
 }
 .post-image-row {
@@ -355,7 +355,6 @@ footer {
   width: 140px;
   height: 140px;
 }
-
 .post-image-row img {
   display: inline-block;
   vertical-align: top;
@@ -504,7 +503,8 @@ a.artZoom span.loading {
   padding: 6px 10px;
 }
 .comment-children {
-  margin-left: 20px;
+  padding-left: 20px;
+  border-bottom: 1px solid #e6ecf0;
 }
 .comment-children .a-avatar img {
   width: 30px;

@@ -11,7 +11,7 @@ class Post extends Validate
     protected $rule = [
         'uid' => ['require', 'isBan'],
         'text' => ['require', 'max' => 255],
-        'image' => ['maxImage'],
+        'image' => ['uploadImage'],
     ];
     protected $message = [
         'uid.require' => '请先登录',
@@ -20,9 +20,9 @@ class Post extends Validate
         'text.max' => '最多只能输入255个文字',
     ];
     /**
-     * 验证上传图片个数
+     * 验证上传图片
      */
-    public function maxImage($value)
+    public function uploadImage($value)
     {
         try {
             if (!empty($value)) {

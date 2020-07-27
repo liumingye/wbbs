@@ -32,7 +32,7 @@ class Auth extends Base
                 $validate->check($data);
                 /** 开始验证用户 **/
                 $remember = input('remember');
-                $valid = $user->login($data['name'], $data['password'], false, $remember ? 30 + 24 * 3600 : 0);
+                $valid = $user->login($data['name'], $data['password'], false, $remember ? 30 * 24 * 3600 : 0);
                 /** 比对密码 */
                 if (!$valid) {
                     /** 防止穷举,休眠3秒 */
@@ -42,7 +42,7 @@ class Auth extends Base
                     View::assign(compact('error'));
                 } else {
                     /** 跳转验证后地址 */
-                    return $this->success('登录成功');
+                    return $this->success('登录成功',url('/'));
                 }
             } catch (ValidateException $e) {
                 /** 设置提示信息 */

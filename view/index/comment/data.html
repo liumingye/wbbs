@@ -27,7 +27,7 @@
 <div class="comment-without">还没有人评论，赶快抢个沙发</div>
 {/if}
 {if $comments.total > $comments.limit * $comments.page + $comments.start}
-<div class="load-list py-3" data-href="{:url('/comment/data',['pid'=>$comments.pid,'parent'=>$comments.parent,'page'=>$comments.page+1])}" data-dom="{if $comments.parent == 0}.comment-list{else}#comment-{$comments.parent} .comment-children{/if}">
-    <div class="btn btn-primary">显示更多</div>
+<div class="load-row">
+    <div class="btn btn-primary load-btn" data-href="{:url('/comment/data',['pid'=>$comments.pid,'parent'=>$comments.parent,'page'=>$comments.page+1])}" data-dom="{if $comments.parent == 0}.comment-list{else}#comment-{$comments.parent} .comment-children{/if}"><i class="la la-refresh"></i>显示更多</div>
 </div>
 {/if}

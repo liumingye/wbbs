@@ -59,20 +59,78 @@ class Post extends Base
             $validate->check($data);
             $text = htmlspecialchars(removeXSS(trim($data['text'])));
             $image = htmlspecialchars(removeXSS(trim($data['image'])));
-            $data['text'] = $this->handle($text, $image);
+            /* 话题处理 */
+            if (strpos($text, '#') !== false) {
+                if (preg_match_all('~\#([^\#]+?)\#~', $text, $match)) {
+                    $tags = $match[1];
+                    foreach ($match[1] as $v) {
+                        $cont_sch[] = "#{$v}#";
+                        $cont_rpl[] = "[T]{$v}[/T]";
+                    }
+                }
+                if ($cont_sch && $cont_rpl) {
+                    // 增加话题数据
+                    $topics = array_unique($tags);
+                    $topicid = [];
+                    foreach ($topics as $v) {
+                        $topic = new Topic;
+                        $res = $topic->field('id')->where('name', $v)->find();
+                        if (!$res) {
+                            $topic->save([
+                                'name' => $v,
+                            ]);
+                            $topicid[] = $topic->id;
+                        } else {
+                            $topicid[] = $res->id;
+                        }
+                    }
+                    $cont_sch = array_unique($cont_sch);
+                    $cont_rpl = array_unique($cont_rpl);
+                    // 按照长度排序，防止被错误替换
+                    uasort($cont_sch, function ($a, $b) {
+                        return strLen($a) < strLen($b);
+                    });
+                    foreach ($cont_sch as $key => $val) {
+                        $cont_rpl2[$key] = $cont_rpl[$key];
+                    }
+                    $cont_sch = array_merge($cont_sch);
+                    $cont_rpl2 = array_merge($cont_rpl2);
+                    $text = str_replace($cont_sch, $cont_rpl2, $text);
+                }
+            }
+            /** 图片处理 */
+            if (isset($image) && $image) {
+                $images = explode("|", $image);
+                if (!empty($images)) {
+                    $image = [];
+                    foreach ($images as $img) {
+                        list($type, $id) = explode(":", $img);
+                        if (isset($type) && in_array($type, config('wbbs.upload.way')) && isset($id)) {
+                            $text .= "[F]{$type}:{$id}[/F]";
+                        }
+                    }
+                }
+            }
+            $data['text'] = $text;
             $res = $this->save($data);
             if ($res) {
                 // 文章 关联 话题
                 if (!empty($topicid)) {
-                    $relationships = new Relationships;
-                    $data = [];
+                    $arr = [];
+                    $tids = [];
                     foreach ($topicid as $tid) {
-                        $data[] = [
+                        $arr[] = [
                             'pid' => $this->id,
                             'tid' => $tid,
                         ];
+                        $tids[] = $tid;
                     }
-                    $relationships->saveAll($data);
+                    // 增加关联数据
+                    $relationships = new Relationships;
+                    $relationships->saveAll($arr);
+                    // 增加话题讨论数
+                    $topic = new Topic;
+                    $topic->where('id', 'IN', $tids)->inc('talks')->update();
                 }
                 // 增加发帖数
                 $uid = $data['uid'];
@@ -97,74 +155,17 @@ class Post extends Base
             // 删除评论
             $comment = new Comment;
             $comment->where('pid', $id)->delete();
+            // 减少话题讨论数
+            $tid = Relationships::field('tid')->where('pid', $id)->select()->toArray();
+            if (!empty($tid)) {
+                $tid = array_column($tid, 'tid');
+                Topic::where('id', 'IN', $tid)->dec('talks')->update();
+            }
+            // 减少发帖数
+            User::find($uid)->dec('post_num')->cache('user_' . $uid)->update();
             return ['code' => 1, 'msg' => '删除成功'];
         }
         return ['code' => 0, 'msg' => '删除失败'];
-    }
-
-    /**
-     * 内容处理
-     */
-    public function handle($text, $image)
-    {
-        /* 话题处理 */
-        if (strpos($text, '#') !== false) {
-            if (preg_match_all('~\#([^\#]+?)\#~', $text, $match)) {
-                foreach ($match[1] as $v) {
-                    $v = str_replace(array('(', ')'), '', trim($v));
-                    $tags[$v] = $v;
-                    $cont_sch[] = "#{$v}#";
-                    $cont_rpl[] = "[T]{$v}[/T]";
-                    $topics[] = $v;
-                }
-            }
-            if (!empty($topics)) {
-                //update topic
-                $topics = array_unique($topics);
-                $db = new Topic;
-                foreach ($topics as $v) {
-                    $topic = $db->where('name', $v)->find();
-                    if (!$topic) {
-                        $db->save([
-                            'name' => $v,
-                            'talks' => 1,
-                        ]);
-                        $topicid[] = $db->id;
-                    } else {
-                        $db->where('name', $v)->inc('talks');
-                        $topicid[] = $topic->id;
-                    }
-                }
-                if ($cont_sch && $cont_rpl) {
-                    $cont_sch = array_unique($cont_sch);
-                    $cont_rpl = array_unique($cont_rpl);
-                    //按照长度排序，防止被错误替换
-                    uasort($cont_sch, function ($a, $b) {
-                        return strLen($a) < strLen($b);
-                    });
-                    foreach ($cont_sch as $key => $val) {
-                        $cont_rpl2[$key] = $cont_rpl[$key];
-                    }
-                    $cont_sch = array_merge($cont_sch);
-                    $cont_rpl2 = array_merge($cont_rpl2);
-                    $text = str_replace($cont_sch, $cont_rpl2, $text);
-                }
-            }
-        }
-        /** 图片处理 */
-        if (isset($image) && $image) {
-            $date_image = explode("|", $image);
-            if (!empty($date_image)) {
-                $image = [];
-                foreach ($date_image as $img) {
-                    list($type, $id) = explode(":", $img);
-                    if (isset($type) && in_array($type, config('wbbs.upload.way')) && isset($id)) {
-                        $text .= "[F]{$type}:{$id}[/F]";
-                    }
-                }
-            }
-        }
-        return $text;
     }
 
     /**
